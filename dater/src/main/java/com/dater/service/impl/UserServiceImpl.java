@@ -44,6 +44,10 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void updateUser(UserEntity user) {
+		UserEntity loggedInUser = getLoggedInUser();
+		if(!loggedInUser.getRole().equals("ADMIN") && loggedInUser.getId().equals(user.getId())) {
+			throw new IllegalArgumentException("Update is not permitted for other user than currently logged in.");
+		}
 	}
 	
 	@Override

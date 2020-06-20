@@ -55,10 +55,6 @@ public class UserController {
 	
 	@PutMapping
 	public void updateUser(@RequestBody UserEntity user) {
-		UserEntity loggedInUser = userService.getLoggedInUser();
-		if(!loggedInUser.getRole().equals("ADMIN") && loggedInUser.getId().equals(user.getId())) {
-			throw new IllegalArgumentException("Update is not permitted for other user than currently logged in.");
-		}
 		userService.updateUser(user);
 	}
 	
