@@ -12,10 +12,10 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,7 +57,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
 	@Enumerated(EnumType.STRING)
 	private Gender preference;
 	
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection
+	@BatchSize(size = 10)
 	@CollectionTable(name = "userPhotos", joinColumns = @JoinColumn(name = "id"))
 	private List<String> photos = new ArrayList<>(5);
 	

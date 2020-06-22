@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.dater.exception.AuthorizationException;
 import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
 import com.dater.model.Gender;
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
 	public void updateUser(UserEntity user) {
 		UserEntity loggedInUser = getLoggedInUser();
 		if(!loggedInUser.getRole().equals("ADMIN") && loggedInUser.getId().equals(user.getId())) {
-			throw new IllegalArgumentException("Update is not permitted for other user than currently logged in.");
+			throw new AuthorizationException("Update is not permitted for other user than currently logged in.");
 		}
 	}
 	
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return userRepository.findByUsername(username);
+		return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Authentication failed in UserService"));
 	}
 
 	@Override

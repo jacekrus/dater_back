@@ -43,6 +43,12 @@ public class UserController {
 	public UserEntity getLoggedInUser() {
 		return userService.getLoggedInUser();
 	}
+	
+	@GetMapping(value = "/details", produces = JSON)
+	public UserEntity getUserDetails(@RequestParam(name = "id") String id) {
+		UserEntity user = userService.findUserById(id);
+		return user;
+	}
 
 	@PostMapping(consumes = JSON)
 	public void addUser(@RequestBody UserEntity user) {
@@ -50,7 +56,8 @@ public class UserController {
 	}
 	
 	@DeleteMapping
-	public void test() {
+	public void test(@RequestParam(name = "id") String id) {
+		userService.removeUser(id);
 	}
 	
 	@PutMapping
@@ -63,11 +70,11 @@ public class UserController {
 //		UserEntity admin = new UserEntity("admin", "admin@datr.com", "admin", LocalDate.now(), "Katowice", "ADMIN", Gender.MALE, Gender.FEMALE,
 //				Arrays.asList("https://www.wykop.pl/cdn/c3201142/comment_xGzPTCePZe26dWY0HySM0QCZGyAyS0HC.jpg", "https://i.redd.it/7tp05fk4rp021.jpg"));
 //		userService.addUser(admin);
-		
+//		
 //		UserEntity user = new UserEntity("user", "user@datr.com", "user", LocalDate.now(), "Katowice", "USER", Gender.MALE, Gender.FEMALE,
 //		Arrays.asList("https://www.wykop.pl/cdn/c3201142/comment_xGzPTCePZe26dWY0HySM0QCZGyAyS0HC.jpg", "https://i.redd.it/7tp05fk4rp021.jpg"));
 //		userService.addUser(user);
-		
+//		
 //		UserEntity user2 = new UserEntity("user2", "user2@datr.com", "user2", LocalDate.now(), "Katowice", "USER", Gender.MALE, Gender.MALE,
 //				Arrays.asList("https://www.wykop.pl/cdn/c3201142/comment_xGzPTCePZe26dWY0HySM0QCZGyAyS0HC.jpg", "https://i.redd.it/7tp05fk4rp021.jpg"));
 //		userService.addUser(user2);
