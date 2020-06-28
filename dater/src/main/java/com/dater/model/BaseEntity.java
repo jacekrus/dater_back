@@ -42,14 +42,14 @@ public abstract class BaseEntity {
 		return getIdString(UUID.randomUUID());
 	}
 
-	private static String getIdString(UUID uuid) {
+	private String getIdString(UUID uuid) {
 		long hi = uuid.getMostSignificantBits();
 		long lo = uuid.getLeastSignificantBits();
 		StringBuilder sb = new StringBuilder();
 		for (int i = 58; i >= 4; i -= 6) {
 			sb.append(DICT[(int) ((hi >>> i) & MASK)]);
 		}
-		sb.append(DICT[(int) (((hi << 2) + (lo >>> 62)) & MASK)]);
+		sb.append(DICT[(int) (((hi << 2) + (lo >>> 60)) & MASK)]);
 		for (int i = 56; i >= 2; i -= 6) {
 			sb.append(DICT[(int) ((lo >>> i) & MASK)]);
 		}

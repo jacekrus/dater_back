@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +38,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void addUser(UserEntity userEntity) {
+		if(userEntity.getPassword().length() > 24) {
+			throw new IllegalArgumentException("Too long password, only 24 characters are allowed.");
+		}
 		userEntity.setId(userEntity.generateId());
 		userEntity.setPassword(passwordEncoder().encode(userEntity.getPassword()));
 		if(userEntity.getRole() == null) {
@@ -52,9 +58,9 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public List<UserEntity> findRecommendedForCurrentUser(String genderString) {
-		Optional<Gender> preferredGender = ConversionUtil.convertStringToGender(genderString);
-		return userRepository.findRecommendedForCurrentUser(getLoggedInUser().getGender(), preferredGender);
+	public List<UserEntity> findRecommendedForCurrentUser() {
+		UserEntity loggedInUser = getLoggedInUser();
+		return userRepository.findRecommendedForCurrentUser(loggedInUser.getGender(), Optional.ofNullable(loggedInUser.getPreference()));
 	}
 
 	@Override
@@ -64,8 +70,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserEntity> findAllUsers() {
-		return userRepository.findAll();
+	public List<UserEntity> findUsers(Example<UserEntity> example, Pageable pageable) {
+		return userRepository.findAll(example, pageable).getContent();
 	}
 
 	@Override

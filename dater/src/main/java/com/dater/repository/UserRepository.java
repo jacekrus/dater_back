@@ -16,8 +16,4 @@ public interface UserRepository extends JpaRepository<UserEntity, String>, Custo
 	@Query("SELECT user FROM UserEntity user left join fetch user.photos where user.username=:username")
 	Optional<UserEntity> findByUsername(@Param("username") String username);
 	
-//	@Override
-//	@Query("SELECT distinct user FROM UserEntity user left join fetch user.photos")
-//	List<UserEntity> findAll();
-	
 }

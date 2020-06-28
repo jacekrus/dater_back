@@ -2,6 +2,8 @@ package com.dater.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.dater.exception.UserNotFoundException;
@@ -13,13 +15,13 @@ public interface UserService extends UserDetailsService {
 	
 	void removeUser(String id);
 	
-	List<UserEntity> findAllUsers(); 
+	List<UserEntity> findUsers(Example<UserEntity> example, Pageable pageable); 
 	
 	UserEntity findUserById(String id) throws UserNotFoundException;
 	
 	void updateUser(UserEntity user);
 	
-	List<UserEntity> findRecommendedForCurrentUser(String prefferedGender);
+	List<UserEntity> findRecommendedForCurrentUser();
 	
 	UserEntity getLoggedInUser();
 

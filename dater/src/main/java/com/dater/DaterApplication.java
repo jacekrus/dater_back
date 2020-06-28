@@ -9,5 +9,5 @@ public class DaterApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DaterApplication.class, args);
 	}
-
+	
 }

@@ -30,7 +30,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
 	
 	private static final long serialVersionUID = -2218558666359340649L;
 
-	@Column(unique = true, nullable = false)
+	@Column(unique = true, nullable = false, length = 18)
 	private String username;
 	
 	@Column(unique = true, nullable = false)
@@ -56,6 +56,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
 	
 	@Enumerated(EnumType.STRING)
 	private Gender preference;
+	
+	@Column(length = 500)
+	private String description;
 	
 	@ElementCollection
 	@BatchSize(size = 10)
@@ -198,6 +201,14 @@ public class UserEntity extends BaseEntity implements UserDetails {
 			photos.remove(photo);
 		}
 		photos.add(0, photo);
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }
