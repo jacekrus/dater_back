@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
@@ -61,8 +62,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
 	private String description;
 	
 	@ElementCollection
+	@CollectionTable(name = "userPhotos", joinColumns = @JoinColumn(name = "userId"))
 	@BatchSize(size = 10)
-	@CollectionTable(name = "userPhotos", joinColumns = @JoinColumn(name = "id"))
+	@OrderColumn
 	private List<String> photos = new ArrayList<>(5);
 	
 	public UserEntity(String username, String email, String password, 

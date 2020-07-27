@@ -3,10 +3,11 @@ package com.dater.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -20,11 +21,9 @@ import org.springframework.stereotype.Service;
 import com.dater.exception.AuthorizationException;
 import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
-import com.dater.model.Gender;
 import com.dater.model.UserEntity;
 import com.dater.repository.UserRepository;
 import com.dater.service.UserService;
-import com.dater.utils.ConversionUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -58,9 +57,12 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public List<UserEntity> findRecommendedForCurrentUser() {
-		UserEntity loggedInUser = getLoggedInUser();
-		return userRepository.findRecommendedForCurrentUser(loggedInUser.getGender(), Optional.ofNullable(loggedInUser.getPreference()));
+	public List<UserEntity> findRecommendedForUser(String userId) {
+		UserEntity user = findUserById(userId);
+		List<UserEntity> recommended = userRepository.findRecommended(user.getGender(), Optional.ofNullable(user.getPreference()));
+		//workaround to trigger lazy association fetching
+		recommended.stream().findFirst().ifPresent(rec -> rec.getPhotos().forEach(photo -> {}));
+		return recommended;
 	}
 
 	@Override
@@ -97,8 +99,41 @@ public class UserServiceImpl implements UserService {
 		return (UserEntity) user;
 	}
 
+	@Override
+	@Transactional
+	public void addFavoriteUser(String id) {
+		UserEntity loggedInUser = userRepository.getUserReference(getLoggedInUser().getId());
+		UserEntity potentialDate = userRepository.getUserReference(id);
+		
+		if(!userRepository.isFavorite(loggedInUser, potentialDate)) {
+			userRepository.addFavorite(loggedInUser, potentialDate);
+			if(userRepository.isFavorite(potentialDate, loggedInUser)) {
+				userRepository.createDate(loggedInUser, potentialDate);
+			}
+		}
+	}
+
+	@Override
+	public List<UserEntity> findFavoritesForUser(String userId, Pageable pageable) {
+		List<String> ids = userRepository.findFavoriteIdsForUser(userRepository.getUserReference(userId), pageable);
+		return userRepository.findUsersByIdWithPhotos(ids);
+	}
+	
+	@Override
+	public List<UserEntity> findLikedByForUser(String userId, Pageable pageable) {
+		List<String> ids = userRepository.findLikedByIdsForUser(userRepository.getUserReference(userId), pageable);
+		return userRepository.findUsersByIdWithPhotos(ids);
+	}
+	
+	@Override
+	public List<UserEntity> findDatesForUser(String userId, Pageable pageable) {
+		List<String> ids = userRepository.findDateIdsForUser(userRepository.getUserReference(userId), pageable);
+		return userRepository.findUsersByIdWithPhotos(ids);
+	}
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 }

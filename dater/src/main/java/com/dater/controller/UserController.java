@@ -1,5 +1,7 @@
 package com.dater.controller;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dater.model.Gender;
 import com.dater.model.UserEntity;
 import com.dater.service.UserService;
 
@@ -33,7 +36,7 @@ public class UserController {
 	
 	@GetMapping(value = "/recommended", produces = JSON)
 	public List<UserEntity> getRecommendedUsers() {
-		return userService.findRecommendedForCurrentUser();
+		return userService.findRecommendedForUser(getLoggedInUser().getId());
 	}
 	
 	@GetMapping(value = "/me", produces = JSON)
@@ -41,13 +44,28 @@ public class UserController {
 		return userService.getLoggedInUser();
 	}
 	
-	@GetMapping(value = "/details", produces = JSON)
-	public UserEntity getUserDetails(@RequestParam(name = "id") String id) {
+	@GetMapping(produces = JSON)
+	public UserEntity getUser(@RequestParam(name = "id") String id) {
 		return userService.findUserById(id);
 	}
 	
+	@GetMapping(value = "/favorites", produces = JSON)
+	public List<UserEntity> getFavorites(Pageable pageable) {
+		return userService.findFavoritesForUser(getLoggedInUser().getId(), pageable);
+	}
+	
+	@GetMapping(value = "/likedby", produces = JSON)
+	public List<UserEntity> getLikedBy(Pageable pageable) {
+		return userService.findLikedByForUser(getLoggedInUser().getId(), pageable);
+	}
+	
+	@GetMapping(value = "/dates", produces = JSON)
+	public List<UserEntity> getDates(Pageable pageable) {
+		return userService.findDatesForUser(getLoggedInUser().getId(), pageable);
+	}
+	
 	@PostMapping(consumes = JSON, produces = JSON)
-	public List<UserEntity> getUsersPaginated(@RequestBody UserEntity exampleUser, Pageable pageable) {
+	public List<UserEntity> getUsers(@RequestBody UserEntity exampleUser, Pageable pageable) {
 		return userService.findUsers(Example.of(exampleUser), pageable);
 	}
 
@@ -56,14 +74,19 @@ public class UserController {
 		userService.addUser(user);
 	}
 	
-	@DeleteMapping
-	public void test(@RequestParam(name = "id") String id) {
-		userService.removeUser(id);
+	@PutMapping(value = "/like")
+	public void addFavoriteUser(@RequestParam(name = "id") String id) {
+		userService.addFavoriteUser(id);
 	}
 	
 	@PutMapping
 	public void updateUser(@RequestBody UserEntity user) {
 		userService.updateUser(user);
+	}
+	
+	@DeleteMapping
+	public void deleteUser(@RequestParam(name = "id") String id) {
+		userService.removeUser(id);
 	}
 	
 	@EventListener(ApplicationStartedEvent.class)

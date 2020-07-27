@@ -15,14 +15,22 @@ public interface UserService extends UserDetailsService {
 	
 	void removeUser(String id);
 	
-	List<UserEntity> findUsers(Example<UserEntity> example, Pageable pageable); 
+	void updateUser(UserEntity user);
+	
+	void addFavoriteUser(String id);
 	
 	UserEntity findUserById(String id) throws UserNotFoundException;
 	
-	void updateUser(UserEntity user);
-	
-	List<UserEntity> findRecommendedForCurrentUser();
-	
 	UserEntity getLoggedInUser();
+	
+	List<UserEntity> findRecommendedForUser(String userId);
+	
+	List<UserEntity> findUsers(Example<UserEntity> example, Pageable pageable); 
+	
+	List<UserEntity> findFavoritesForUser(String userId, Pageable pageable);
+	
+	List<UserEntity> findLikedByForUser(String userId, Pageable pageable);
+	
+	List<UserEntity> findDatesForUser(String userId, Pageable pageable);
 
 }
