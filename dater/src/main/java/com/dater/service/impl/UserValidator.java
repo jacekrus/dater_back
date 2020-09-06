@@ -28,7 +28,7 @@ public class UserValidator {
 	private static final String DATE_TOO_OLD = "Date of birth cannot be from more than 100 years ago.";
 	private static final String DATE_TOO_YOUNG = "You have to be older than 18 years to create an account.";
 	private static final String LOCATION_EMPTY = "Location cannot be empty.";
-	private static final String LOCATION_INVALID_CHARS = "Location contains invalid characters, only letters are allowed.";
+	private static final String LOCATION_INVALID_CHARS = "Location contains invalid characters, only letters are allowed separated by a space [country city].";
 	private static final String GENDER_EMPTY = "Gender has not been selected.";
 	private static final String DESCRIPTION_TOO_LONG = "Description is too long, maximum length is 500 characters.";
 	private static final String PHOTOS_EMPTY = "At least one photo is required.";
@@ -102,10 +102,10 @@ public class UserValidator {
 		if(date == null) {
 			throw new UserValidationException(DATE_EMPTY);
 		}
-		if(!date.isAfter(LocalDate.now().minusYears(100))) {
+		if(date.isBefore(LocalDate.now().minusYears(100))) {
 			throw new UserValidationException(DATE_TOO_OLD);
 		}
-		if(date.isBefore(LocalDate.now().minusYears(18))) {
+		if(date.isAfter(LocalDate.now().minusYears(18))) {
 			throw new UserValidationException(DATE_TOO_YOUNG);
 		}
 	}
@@ -151,7 +151,7 @@ public class UserValidator {
 	private boolean containsOnlyLetters(String value) {
 		char[] chars = value.toCharArray();
 		for(char c : chars) {
-			if(!Character.isLetter(c)) {
+			if(!Character.isLetter(c) && !Character.isSpaceChar(c)) {
 				return false;
 			}
 		}

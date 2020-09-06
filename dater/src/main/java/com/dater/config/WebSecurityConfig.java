@@ -36,6 +36,7 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 			.antMatchers(HttpMethod.DELETE, "/users").hasAuthority("ADMIN")
 			.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+			.antMatchers(HttpMethod.POST, "/users/add").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.addFilterBefore(new CorsFilterConfig(), ChannelProcessingFilter.class)

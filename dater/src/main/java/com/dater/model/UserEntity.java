@@ -187,9 +187,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
 	}
 	
 	public boolean addPhoto(String photo) {
-		if(photos.size() == 5) {
-			throw new IllegalStateException("Only 5 photos are allowed per user.");
-		}
 		return photos.add(photo);
 	}
 	

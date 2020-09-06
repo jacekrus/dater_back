@@ -24,6 +24,7 @@ import com.dater.exception.AuthorizationException;
 import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
 import com.dater.exception.UserValidationException;
+import com.dater.model.Gender;
 import com.dater.model.UserEntity;
 import com.dater.repository.UserRepository;
 import com.dater.service.UserService;
@@ -48,6 +49,9 @@ public class UserServiceImpl implements UserService {
 		userEntity.setPassword(passwordEncoder().encode(userEntity.getPassword()));
 		if(userEntity.getRole() == null) {
 			userEntity.setRole("USER");
+		}
+		if(userEntity.getPreference() == null) {
+			userEntity.setPreference(userEntity.getGender() == Gender.MALE ? Gender.FEMALE : Gender.MALE);
 		}
 		userRepository.save(userEntity);
 	}
