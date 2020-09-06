@@ -1,7 +1,6 @@
 package com.dater.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -65,7 +64,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
 	@CollectionTable(name = "userPhotos", joinColumns = @JoinColumn(name = "userId"))
 	@BatchSize(size = 10)
 	@OrderColumn
-	private List<String> photos = new ArrayList<>(5);
+	private List<String> photos;
 	
 	public UserEntity(String username, String email, String password, 
 			LocalDate dateOfBirth, String location, String role, Gender gender, Gender preference, List<String> photos) {

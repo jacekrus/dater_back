@@ -15,9 +15,9 @@ public interface UserService extends UserDetailsService {
 	
 	void removeUser(String id);
 	
-	void updateUser(UserEntity user);
-	
 	void addFavoriteUser(String id);
+	
+	UserEntity updateUser(UserEntity user);
 	
 	UserEntity findUserById(String id) throws UserNotFoundException;
 	

@@ -1,5 +1,6 @@
 package com.dater.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.dater.exception.AuthorizationException;
 import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
+import com.dater.exception.UserValidationException;
 import com.dater.model.UserEntity;
 import com.dater.repository.UserRepository;
 import com.dater.service.UserService;
@@ -37,8 +40,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void addUser(UserEntity userEntity) {
-		if(userEntity.getPassword().length() > 24) {
-			throw new IllegalArgumentException("Too long password, only 24 characters are allowed.");
+		new UserValidator(userEntity).validate();
+		if(userRepository.existsByUsernameOrEmail(userEntity.getUsername(), userEntity.getEmail())) {
+			throw new UserValidationException("User with such username or e-mail already exists.");
 		}
 		userEntity.setId(userEntity.generateId());
 		userEntity.setPassword(passwordEncoder().encode(userEntity.getPassword()));
@@ -49,11 +53,24 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void updateUser(UserEntity user) {
-		UserEntity loggedInUser = getLoggedInUser();
-		if(!loggedInUser.getRole().equals("ADMIN") && loggedInUser.getId().equals(user.getId())) {
+	public UserEntity updateUser(UserEntity user) {
+		UserEntity loggedInUser = (UserEntity) loadUserByUsername(getLoggedInUser().getUsername());
+		if(!loggedInUser.getRole().equals("ADMIN") && !loggedInUser.getId().equals(user.getId())) {
 			throw new AuthorizationException("Update is not permitted for other user than currently logged in.");
 		}
+		if(user.getDescription() != null) {
+			loggedInUser.setDescription(user.getDescription());
+		}
+		if(user.getPreference() != loggedInUser.getPreference()) {
+			loggedInUser.setPreference(user.getPreference());
+		}
+		if(user.getLocation() != null) {
+			loggedInUser.setLocation(user.getLocation());
+		}
+		UserEntity updatedUser = userRepository.save(loggedInUser);
+		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(updatedUser, updatedUser.getPassword(), updatedUser.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
+		return updatedUser;
 	}
 	
 	@Override

@@ -80,8 +80,8 @@ public class UserController {
 	}
 	
 	@PutMapping
-	public void updateUser(@RequestBody UserEntity user) {
-		userService.updateUser(user);
+	public UserEntity updateUser(@RequestBody UserEntity user) {
+		return userService.updateUser(user);
 	}
 	
 	@DeleteMapping
