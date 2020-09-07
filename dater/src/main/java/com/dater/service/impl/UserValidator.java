@@ -33,8 +33,7 @@ public class UserValidator {
 	private static final String DESCRIPTION_TOO_LONG = "Description is too long, maximum length is 500 characters.";
 	private static final String PHOTOS_EMPTY = "At least one photo is required.";
 	private static final String TOO_MANY_PHOTOS = "Maximum of 5 photos is allowed.";
-	private static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
-		    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
 	public UserValidator(UserEntity user) {
 		this.user = user;

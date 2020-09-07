@@ -47,9 +47,7 @@ public class UserServiceImpl implements UserService {
 		}
 		userEntity.setId(userEntity.generateId());
 		userEntity.setPassword(passwordEncoder().encode(userEntity.getPassword()));
-		if(userEntity.getRole() == null) {
-			userEntity.setRole("USER");
-		}
+		userEntity.setRole("USER");
 		if(userEntity.getPreference() == null) {
 			userEntity.setPreference(userEntity.getGender() == Gender.MALE ? Gender.FEMALE : Gender.MALE);
 		}
