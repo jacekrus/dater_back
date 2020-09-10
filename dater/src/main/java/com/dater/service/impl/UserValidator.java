@@ -11,8 +11,6 @@ import com.dater.model.UserEntity;
 
 public class UserValidator {
 	
-	private final UserEntity user;
-	
 	private static final String USER_DATA_EMPTY = "Provided user data is empty.";
 	private static final String USERNAME_EMPTY = "Username cannot be empty.";
 	private static final String USERNAME_TOO_SHORT = "Username is too short, minimum length is 5 characters.";
@@ -35,25 +33,35 @@ public class UserValidator {
 	private static final String TOO_MANY_PHOTOS = "Maximum of 5 photos is allowed.";
 	private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
-	public UserValidator(UserEntity user) {
-		this.user = user;
+	private UserValidator() {}
+	
+	private static class InstanceHolder {
+		private final static UserValidator instance = new UserValidator(); 
 	}
 	
-	public void validate() {
+	public static UserValidator getInstance() {
+		return InstanceHolder.instance;
+	}
+	
+	public void validate(UserEntity user) {
 		if(user == null) {
 			throw new UserValidationException(USER_DATA_EMPTY);
 		}
-		validateUsername();
-		validateEmail();
-		validatePassword();
-		validateDateOfBirth();
-		validateLocation();
-		validateGender();
-		validateDescription();
-		validatePhotos();
+		validateUsername(user);
+		validateEmail(user);
+		validatePassword(user);
+		validateDateOfBirth(user);
+		validateLocation(user);
+		validateGender(user);
+		validateDescription(user);
 	}
 	
-	private void validateUsername() {
+	public void validateWithPhotos(UserEntity user) {
+		validate(user);
+		validatePhotos(user);
+	}
+	
+	private void validateUsername(UserEntity user) {
 		String username = user.getUsername();
 		if(isNullOrBlank(username)) {
 			throw new UserValidationException(USERNAME_EMPTY);
@@ -69,7 +77,7 @@ public class UserValidator {
 		}
 	}
 	
-	private void validateEmail() {
+	private void validateEmail(UserEntity user) {
 		String email = user.getEmail();
 		if(isNullOrBlank(email)) {
 			throw new UserValidationException(EMAIL_EMPTY);
@@ -80,7 +88,7 @@ public class UserValidator {
         }
 	}
 	
-	private void validatePassword() {
+	private void validatePassword(UserEntity user) {
 		String password = user.getPassword();
 		if(isNullOrBlank(password)) {
 			throw new UserValidationException(PASSWORD_EMPTY);
@@ -96,7 +104,7 @@ public class UserValidator {
 		}
 	}
 	
-	private void validateDateOfBirth() {
+	private void validateDateOfBirth(UserEntity user) {
 		LocalDate date = user.getDateOfBirth();
 		if(date == null) {
 			throw new UserValidationException(DATE_EMPTY);
@@ -109,7 +117,7 @@ public class UserValidator {
 		}
 	}
 	
-	private void validateLocation() {
+	private void validateLocation(UserEntity user) {
 		String location = user.getLocation();
 		if(isNullOrBlank(location)) {
 			throw new UserValidationException(LOCATION_EMPTY);
@@ -119,21 +127,21 @@ public class UserValidator {
 		}
 	}
 	
-	private void validateGender() {
+	private void validateGender(UserEntity user) {
 		Gender gender = user.getGender();
 		if(gender == null) {
 			throw new UserValidationException(GENDER_EMPTY);
 		}
 	}
 	
-	private void validateDescription() {
+	private void validateDescription(UserEntity user) {
 		String description = user.getDescription();
 		if(description != null && description.length() > 500) {
 			throw new UserValidationException(DESCRIPTION_TOO_LONG);
 		}
 	}
 	
-	private void validatePhotos() {
+	private void validatePhotos(UserEntity user) {
 		List<String> photos = user.getPhotos();
 		if(photos == null || photos.isEmpty()) {
 			throw new UserValidationException(PHOTOS_EMPTY);

@@ -1,6 +1,5 @@
 package com.dater.service.impl;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void addUser(UserEntity userEntity) {
-		new UserValidator(userEntity).validate();
+		UserValidator.getInstance().validateWithPhotos(userEntity);
 		if(userRepository.existsByUsernameOrEmail(userEntity.getUsername(), userEntity.getEmail())) {
 			throw new UserValidationException("User with such username or e-mail already exists.");
 		}
@@ -52,6 +51,14 @@ public class UserServiceImpl implements UserService {
 			userEntity.setPreference(userEntity.getGender() == Gender.MALE ? Gender.FEMALE : Gender.MALE);
 		}
 		userRepository.save(userEntity);
+	}
+	
+	@Override
+	public void validateUser(UserEntity userEntity) {
+		UserValidator.getInstance().validate(userEntity);
+		if(userRepository.existsByUsernameOrEmail(userEntity.getUsername(), userEntity.getEmail())) {
+			throw new UserValidationException("User with such username or e-mail already exists.");
+		}
 	}
 	
 	@Override

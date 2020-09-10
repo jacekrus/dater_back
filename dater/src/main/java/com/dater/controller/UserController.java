@@ -1,7 +1,5 @@
 package com.dater.controller;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dater.model.Gender;
 import com.dater.model.UserEntity;
 import com.dater.service.UserService;
 
@@ -72,6 +69,11 @@ public class UserController {
 	@PostMapping(value = "/add", consumes = JSON)
 	public void addUser(@RequestBody UserEntity user) {
 		userService.addUser(user);
+	}
+	
+	@PostMapping(value = "/validate", consumes = JSON)
+	public void validateUser(@RequestBody UserEntity user) {
+		userService.validateUser(user);
 	}
 	
 	@PutMapping(value = "/like")

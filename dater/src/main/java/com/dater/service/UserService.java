@@ -13,6 +13,8 @@ public interface UserService extends UserDetailsService {
 	
 	void addUser(UserEntity user);
 	
+	void validateUser(UserEntity user);
+	
 	void removeUser(String id);
 	
 	void addFavoriteUser(String id);
