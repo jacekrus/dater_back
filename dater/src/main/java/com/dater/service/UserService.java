@@ -21,6 +21,10 @@ public interface UserService extends UserDetailsService {
 	
 	UserEntity updateUser(UserEntity user);
 	
+	UserEntity setProfilePhoto(String photo);
+	
+	UserEntity removePhoto(String photo);
+	
 	UserEntity findUserById(String id) throws UserNotFoundException;
 	
 	UserEntity getLoggedInUser();

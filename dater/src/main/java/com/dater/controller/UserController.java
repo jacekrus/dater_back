@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dater.model.UserEntity;
 import com.dater.service.UserService;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 @RestController
 @RequestMapping("/users")
@@ -84,6 +86,16 @@ public class UserController {
 	@PutMapping
 	public UserEntity updateUser(@RequestBody UserEntity user) {
 		return userService.updateUser(user);
+	}
+	
+	@PutMapping(value = "/photos")
+	public UserEntity setProfilePhoto(@RequestBody TextNode photo) {
+		return userService.setProfilePhoto(photo.asText());
+	}
+	
+	@PatchMapping(value = "/photos")
+	public UserEntity removePhoto(@RequestBody TextNode photo) {
+		return userService.removePhoto(photo.asText());
 	}
 	
 	@DeleteMapping

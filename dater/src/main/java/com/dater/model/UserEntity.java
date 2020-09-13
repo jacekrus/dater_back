@@ -190,14 +190,16 @@ public class UserEntity extends BaseEntity implements UserDetails {
 		return photos.add(photo);
 	}
 	
+	public boolean addPhotos(Collection<String> photos) {
+		return this.photos.addAll(photos);
+	}
+	
 	public boolean removePhoto(String photo) {
 		return photos.remove(photo);
 	}
 	
 	public void setProfilePhoto(String photo) {
-		if(photos.contains(photo)) {
-			photos.remove(photo);
-		}
+		photos.remove(photo);
 		photos.add(0, photo);
 	}
 

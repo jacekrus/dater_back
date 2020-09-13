@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.dater.service.impl.UserMessages.*;
 import com.dater.exception.AuthorizationException;
 import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
@@ -41,9 +42,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void addUser(UserEntity userEntity) {
 		UserValidator.getInstance().validateWithPhotos(userEntity);
-		if(userRepository.existsByUsernameOrEmail(userEntity.getUsername(), userEntity.getEmail())) {
-			throw new UserValidationException("User with such username or e-mail already exists.");
-		}
+		checkDoesNotAlreadyExist(userEntity);
 		userEntity.setId(userEntity.generateId());
 		userEntity.setPassword(passwordEncoder().encode(userEntity.getPassword()));
 		userEntity.setRole("USER");
@@ -56,17 +55,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void validateUser(UserEntity userEntity) {
 		UserValidator.getInstance().validate(userEntity);
-		if(userRepository.existsByUsernameOrEmail(userEntity.getUsername(), userEntity.getEmail())) {
-			throw new UserValidationException("User with such username or e-mail already exists.");
-		}
+		checkDoesNotAlreadyExist(userEntity);
 	}
 	
 	@Override
 	public UserEntity updateUser(UserEntity user) {
-		UserEntity loggedInUser = (UserEntity) loadUserByUsername(getLoggedInUser().getUsername());
-		if(!loggedInUser.getRole().equals("ADMIN") && !loggedInUser.getId().equals(user.getId())) {
-			throw new AuthorizationException("Update is not permitted for other user than currently logged in.");
-		}
+		UserEntity loggedInUser = getLoggedInUserForUpdate();
 		if(user.getDescription() != null) {
 			loggedInUser.setDescription(user.getDescription());
 		}
@@ -76,12 +70,47 @@ public class UserServiceImpl implements UserService {
 		if(user.getLocation() != null) {
 			loggedInUser.setLocation(user.getLocation());
 		}
+		if(user.getPhotos() != null) {
+			List<String> photos = loggedInUser.getPhotos();
+			if(user.getPhotos().size() + photos.size() > 4) {
+				throw new UserValidationException(MAX_PHOTOS_EXECEEDED);
+			}
+			if(!loggedInUser.addPhotos(user.getPhotos())) {
+				throw new UserValidationException(ERROR_ADDING_PHOTOS + TRY_AGAIN_OR_CONTACT);
+			}
+		}
 		UserEntity updatedUser = userRepository.save(loggedInUser);
-		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(updatedUser, updatedUser.getPassword(), updatedUser.getAuthorities());
-		SecurityContextHolder.getContext().setAuthentication(newAuth);
+		updateCache(updatedUser);
 		return updatedUser;
 	}
 	
+	@Override
+	public UserEntity setProfilePhoto(String photo) {
+		UserEntity loggedInUser = getLoggedInUserForUpdate();
+		if(!validatePhotoExistsInUserGallery(loggedInUser, photo)) {
+			throw new UserValidationException(ERROR_SETTING_PROFILE_PHOTO + PHOTO_NOT_FOUND);
+		}
+		loggedInUser.setProfilePhoto(photo);
+		UserEntity updatedUser = userRepository.save(loggedInUser);
+		updateCache(updatedUser);
+		return updatedUser;
+	}
+
+	@Override
+	public UserEntity removePhoto(String photo) {
+		UserEntity loggedInUser = getLoggedInUserForUpdate();
+		if(!validatePhotoExistsInUserGallery(loggedInUser, photo)) {
+			throw new UserValidationException(ERROR_REMOVING_PHOTO + PHOTO_NOT_FOUND);
+		}
+		if(loggedInUser.getPhotos().size() < 2) {
+			throw new UserValidationException(ERROR_REMOVING_PHOTO + PHOTO_REQUIRED);
+		}
+		loggedInUser.removePhoto(photo);
+		UserEntity updatedUser = userRepository.save(loggedInUser);
+		updateCache(updatedUser);
+		return updatedUser;
+	}
+
 	@Override
 	public List<UserEntity> findRecommendedForUser(String userId) {
 		UserEntity user = findUserById(userId);
@@ -104,12 +133,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserEntity findUserById(String id) throws UserNotFoundException {
-		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id [" + id + "] has not been found."));
+		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_BY_ID, id)));
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Authentication failed in UserService"));
+		return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(AUTH_FAILED + String.format(USER_NOT_FOUND_BY_USERNAME, username)));
 	}
 
 	@Override
@@ -120,7 +149,7 @@ public class UserServiceImpl implements UserService {
 		}
 		Object user = auth.getPrincipal();
 		if(user == null || !(user instanceof UserEntity)) {
-			throw new UserNotAuthenticatedException("No logged in user found or authentication data is incorrect.");
+			throw new UserNotAuthenticatedException(NO_LOGGED_IN_USER_FOUND);
 		}
 		return (UserEntity) user;
 	}
@@ -161,5 +190,34 @@ public class UserServiceImpl implements UserService {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	private UserEntity getLoggedInUserForUpdate() {
+		UserEntity loggedInUser = (UserEntity) loadUserByUsername(getLoggedInUser().getUsername());
+		authorize(loggedInUser);
+		return loggedInUser;
+	}
+	
+	private void checkDoesNotAlreadyExist(UserEntity user) {
+		if(userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail())) {
+			throw new UserValidationException(USER_ALREADY_EXISTS);
+		}
+	}
+	
+	private void authorize(UserEntity user) {
+		if(!user.getRole().equals("ADMIN") && !user.getId().equals(user.getId())) {
+			throw new AuthorizationException(NOT_AUTHORIZED);
+		}
+	}
+	
+	private boolean validatePhotoExistsInUserGallery(UserEntity user, String photo) {
+		List<String> photos = user.getPhotos();
+		return photos.contains(photo);
+	}
+	
+	private void updateCache(UserEntity user) {
+		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
+	}
+	
 
 }
