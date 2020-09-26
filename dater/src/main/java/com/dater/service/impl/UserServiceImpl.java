@@ -19,7 +19,6 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +28,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dater.exception.UserNotAuthenticatedException;
@@ -55,7 +53,7 @@ public class UserServiceImpl implements UserService {
 		UserValidator.getInstance().validateWithPhotos(userEntity);
 		checkDoesNotAlreadyExist(userEntity);
 		userEntity.setId(userEntity.generateId());
-		userEntity.setPassword(passwordEncoder().encode(userEntity.getPassword()));
+		userEntity.setPassword(new BCryptPasswordEncoder().encode(userEntity.getPassword()));
 		userEntity.setRole("USER");
 		if(userEntity.getPreference() == null) {
 			userEntity.setPreference(userEntity.getGender() == Gender.MALE ? Gender.FEMALE : Gender.MALE);
@@ -195,11 +193,6 @@ public class UserServiceImpl implements UserService {
 	public List<UserEntity> findDatesForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findDateIdsForUser(userRepository.getUserReference(userId), pageable);
 		return userRepository.findUsersByIdWithPhotos(ids);
-	}
-	
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 	
 	private UserEntity getLoggedInUserForUpdate() {
