@@ -36,7 +36,7 @@ public class UserValidator {
 	private UserValidator() {}
 	
 	private static class InstanceHolder {
-		private final static UserValidator instance = new UserValidator(); 
+		private static final UserValidator instance = new UserValidator(); 
 	}
 	
 	public static UserValidator getInstance() {

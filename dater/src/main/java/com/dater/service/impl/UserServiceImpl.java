@@ -1,5 +1,18 @@
 package com.dater.service.impl;
 
+import static com.dater.service.impl.UserMessages.AUTH_FAILED;
+import static com.dater.service.impl.UserMessages.ERROR_ADDING_PHOTOS;
+import static com.dater.service.impl.UserMessages.ERROR_REMOVING_PHOTO;
+import static com.dater.service.impl.UserMessages.ERROR_SETTING_PROFILE_PHOTO;
+import static com.dater.service.impl.UserMessages.MAX_PHOTOS_EXECEEDED;
+import static com.dater.service.impl.UserMessages.NO_LOGGED_IN_USER_FOUND;
+import static com.dater.service.impl.UserMessages.PHOTO_NOT_FOUND;
+import static com.dater.service.impl.UserMessages.PHOTO_REQUIRED;
+import static com.dater.service.impl.UserMessages.TRY_AGAIN_OR_CONTACT;
+import static com.dater.service.impl.UserMessages.USER_ALREADY_EXISTS;
+import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_ID;
+import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_USERNAME;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +32,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.dater.service.impl.UserMessages.*;
-import com.dater.exception.AuthorizationException;
 import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
 import com.dater.exception.UserValidationException;
@@ -132,12 +143,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserEntity findUserById(String id) throws UserNotFoundException {
+	public UserEntity findUserById(String id) {
 		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_BY_ID, id)));
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) {
 		return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(AUTH_FAILED + String.format(USER_NOT_FOUND_BY_USERNAME, username)));
 	}
 
@@ -148,7 +159,7 @@ public class UserServiceImpl implements UserService {
 			throw new UserNotAuthenticatedException("No authentication found in security context.");
 		}
 		Object user = auth.getPrincipal();
-		if(user == null || !(user instanceof UserEntity)) {
+		if(!(user instanceof UserEntity)) {
 			throw new UserNotAuthenticatedException(NO_LOGGED_IN_USER_FOUND);
 		}
 		return (UserEntity) user;
@@ -192,9 +203,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	private UserEntity getLoggedInUserForUpdate() {
-		UserEntity loggedInUser = (UserEntity) loadUserByUsername(getLoggedInUser().getUsername());
-		authorize(loggedInUser);
-		return loggedInUser;
+		return (UserEntity) loadUserByUsername(getLoggedInUser().getUsername());
 	}
 	
 	private void checkDoesNotAlreadyExist(UserEntity user) {
@@ -203,11 +212,6 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 	
-	private void authorize(UserEntity user) {
-		if(!user.getRole().equals("ADMIN") && !user.getId().equals(user.getId())) {
-			throw new AuthorizationException(NOT_AUTHORIZED);
-		}
-	}
 	
 	private boolean validatePhotoExistsInUserGallery(UserEntity user, String photo) {
 		List<String> photos = user.getPhotos();

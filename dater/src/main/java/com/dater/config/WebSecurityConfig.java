@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -21,8 +22,8 @@ import com.dater.service.UserService;
 @EnableWebSecurity(debug = true)
 public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
 	
-	private static final String loginUrl = "/datrLogin";
-	private static final String logoutUrl = "/datrLogout";
+	private static final String LOGIN_URL = "/datrLogin";
+	private static final String LOGOUT_URL = "/datrLogout";
 
 	private UserService userDetailsService;
 
@@ -51,14 +52,14 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
 			.logout()
 			.deleteCookies("JSESSIONID")
 			.invalidateHttpSession(true)
-			.logoutUrl(logoutUrl)
+			.logoutUrl(LOGOUT_URL)
 			.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
 			.and().csrf().disable();
 	}
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService);
+		auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
 	}
 	
 	@Bean
@@ -67,7 +68,7 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
 		filter.setAuthenticationSuccessHandler(new AuthSuccessHandler());
 		filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler());
 		filter.setAuthenticationManager(super.authenticationManager());
-		filter.setFilterProcessesUrl(loginUrl);
+		filter.setFilterProcessesUrl(LOGIN_URL);
 		return filter;
 	}
 	

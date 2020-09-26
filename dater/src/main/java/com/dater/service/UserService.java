@@ -6,7 +6,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import com.dater.exception.UserNotFoundException;
 import com.dater.model.UserEntity;
 
 public interface UserService extends UserDetailsService {
@@ -25,7 +24,7 @@ public interface UserService extends UserDetailsService {
 	
 	UserEntity removePhoto(String photo);
 	
-	UserEntity findUserById(String id) throws UserNotFoundException;
+	UserEntity findUserById(String id);
 	
 	UserEntity getLoggedInUser();
 	
