@@ -25,7 +25,6 @@ public class DateEntity extends BaseEntity {
 	public DateEntity() {}
 
 	public DateEntity(UserEntity firstUser, UserEntity secondUser) {
-		super(null);
 		this.firstUser = firstUser;
 		this.secondUser = secondUser;
 	}

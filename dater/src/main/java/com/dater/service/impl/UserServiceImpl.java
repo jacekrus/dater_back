@@ -52,7 +52,6 @@ public class UserServiceImpl implements UserService {
 	public void addUser(UserEntity userEntity) {
 		UserValidator.getInstance().validateWithPhotos(userEntity);
 		checkDoesNotAlreadyExist(userEntity);
-		userEntity.setId(userEntity.generateId());
 		userEntity.setPassword(new BCryptPasswordEncoder().encode(userEntity.getPassword()));
 		userEntity.setRole("USER");
 		if(userEntity.getPreference() == null) {

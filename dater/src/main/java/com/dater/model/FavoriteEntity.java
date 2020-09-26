@@ -25,7 +25,6 @@ public class FavoriteEntity extends BaseEntity {
 	public FavoriteEntity() {}
 
 	public FavoriteEntity(UserEntity owner, UserEntity ownersFavorite) {
-		super(null);
 		this.owner = owner;
 		this.ownersFavorite = ownersFavorite;
 	}

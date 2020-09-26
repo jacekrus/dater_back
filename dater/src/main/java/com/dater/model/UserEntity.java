@@ -66,18 +66,16 @@ public class UserEntity extends BaseEntity implements UserDetails {
 	@OrderColumn
 	private List<String> photos;
 	
-	public UserEntity(String username, String email, String password, 
-			LocalDate dateOfBirth, String location, String role, Gender gender, Gender preference, List<String> photos) {
-		super(null);
-		this.username = username;
-		this.email = email;
-		this.password = password;
-		this.dateOfBirth = dateOfBirth;
-		this.location = location;
-		this.role = role;
-		this.gender = gender;
-		this.preference = preference;
-		this.photos = photos;
+	protected UserEntity(UserBuilder builder) {
+		this.username = builder.getUsername();
+		this.email = builder.getEmail();
+		this.password = builder.getPassword();
+		this.dateOfBirth = builder.getDateOfBirth();
+		this.location = builder.getLocation();
+		this.role = builder.getRole();
+		this.gender = builder.getGender();
+		this.preference = builder.getPreference();
+		this.photos = builder.getPhotos();
 	}
 
 	public UserEntity() {}
@@ -210,5 +208,5 @@ public class UserEntity extends BaseEntity implements UserDetails {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	
 }
