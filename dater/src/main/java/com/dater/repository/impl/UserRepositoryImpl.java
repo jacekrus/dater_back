@@ -1,4 +1,4 @@
-package com.dater.repository;
+package com.dater.repository.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.data.domain.Pageable;
@@ -15,8 +14,9 @@ import com.dater.model.DateEntity;
 import com.dater.model.FavoriteEntity;
 import com.dater.model.Gender;
 import com.dater.model.UserEntity;
+import com.dater.repository.CustomUserRepository;
 
-public class UserRepositoryImpl implements CustomUserRepository {
+public class UserRepositoryImpl extends AbstractRepository implements CustomUserRepository {
 	
 	@PersistenceContext
 	private EntityManager em;
@@ -93,10 +93,4 @@ public class UserRepositoryImpl implements CustomUserRepository {
 		return query.getResultList();
 	}
 	
-	private void applyPagination(Query query, Pageable pageable) {
-		int pageNumber = pageable.getPageNumber();
-		int pageSize = pageable.getPageSize();
-		query.setFirstResult(pageSize * pageNumber).setMaxResults(pageSize);
-	}
-
 }

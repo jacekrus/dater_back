@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
@@ -123,8 +124,7 @@ public class UserServiceImpl implements UserService {
 	public List<UserEntity> findRecommendedForUser(String userId) {
 		UserEntity user = findUserById(userId);
 		List<UserEntity> recommended = userRepository.findRecommended(user.getGender(), Optional.ofNullable(user.getPreference()));
-		//workaround to trigger lazy association fetching
-		recommended.stream().findFirst().ifPresent(rec -> rec.getPhotos().forEach(photo -> {}));
+		recommended.stream().findFirst().ifPresent(rec -> Hibernate.initialize(rec.getPhotos()));
 		return recommended;
 	}
 

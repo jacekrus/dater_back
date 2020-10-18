@@ -28,6 +28,46 @@ public final class UserMessages {
 	
 	public static final String NO_LOGGED_IN_USER_FOUND = "No logged in user found or authentication data is incorrect. ";
 	
+	public static final String USER_DATA_EMPTY = "Provided user data is empty.";
+	
+	public static final String USERNAME_EMPTY = "Username cannot be empty.";
+	
+	public static final String USERNAME_TOO_SHORT = "Username is too short, minimum length is 5 characters.";
+	
+	public static final String USERNAME_TOO_LONG = "Username is too long, maximum length allowed is 18 characters.";
+	
+	public static final String USERNAME_INVALID_CHARS = "Username contains invalid characters, only letters and digits are allowed.";
+	
+	public static final String EMAIL_EMPTY = "E-mail address cannot be empty.";
+	
+	public static final String EMAIL_INVALID = "Provided e-mail address is invalid.";
+	
+	public static final String PASSWORD_EMPTY = "Password cannot be empty.";
+	
+	public static final String PASSWORD_TOO_SHORT = "Password is too short, minimum length is 5 characters.";
+	
+	public static final String PASSWORD_TOO_LONG = "Password is too long, maximum length allowed is 24 characters.";
+	
+	public static final String PASSWORD_INVALID_CHARS = "Password contains invalid characters, only letters and digits are allowed.";
+	
+	public static final String DATE_EMPTY = "Date of birth cannot be empty.";
+	
+	public static final String DATE_TOO_OLD = "Date of birth cannot be from more than 100 years ago.";
+	
+	public static final String DATE_TOO_YOUNG = "You have to be older than 18 years to create an account.";
+	
+	public static final String LOCATION_EMPTY = "Location cannot be empty.";
+	
+	public static final String LOCATION_INVALID_CHARS = "Location contains invalid characters, only letters are allowed separated by a space [country city].";
+	
+	public static final String GENDER_EMPTY = "Gender has not been selected.";
+	
+	public static final String DESCRIPTION_TOO_LONG = "Description is too long, maximum length is 500 characters.";
+	
+	public static final String PHOTOS_EMPTY = "At least one photo is required.";
+	
+	public static final String TOO_MANY_PHOTOS = "Maximum of 5 photos is allowed.";
+	
 	private UserMessages() {}
 
 }

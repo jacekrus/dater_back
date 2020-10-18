@@ -13,7 +13,7 @@ import com.dater.model.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String>, CustomUserRepository {
 
-	@Query("SELECT user FROM UserEntity user left join fetch user.photos where user.username=:username")
+	@Query("from UserEntity user left join fetch user.photos where user.username=:username")
 	Optional<UserEntity> findByUsername(@Param("username") String username);
 	
 	boolean existsByUsernameOrEmail(String username, String email);
