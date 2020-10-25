@@ -194,6 +194,11 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findUsersByIdWithPhotos(ids);
 	}
 	
+	@Override
+	public UserEntity getReference(String id) {
+		return userRepository.getUserReference(id);
+	}
+	
 	private UserEntity getLoggedInUserForUpdate() {
 		return (UserEntity) loadUserByUsername(getLoggedInUser().getUsername());
 	}
@@ -203,8 +208,7 @@ public class UserServiceImpl implements UserService {
 			throw new UserValidationException(USER_ALREADY_EXISTS);
 		}
 	}
-	
-	
+
 	private boolean validatePhotoExistsInUserGallery(UserEntity user, String photo) {
 		List<String> photos = user.getPhotos();
 		return photos.contains(photo);
@@ -214,6 +218,4 @@ public class UserServiceImpl implements UserService {
 		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(newAuth);
 	}
-	
-
 }

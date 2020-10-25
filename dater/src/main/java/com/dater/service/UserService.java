@@ -28,6 +28,8 @@ public interface UserService extends UserDetailsService {
 	
 	UserEntity getLoggedInUser();
 	
+	UserEntity getReference(String id);
+	
 	List<UserEntity> findRecommendedForUser(String userId);
 	
 	List<UserEntity> findUsers(Example<UserEntity> example, Pageable pageable); 

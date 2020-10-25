@@ -1,7 +1,6 @@
 package com.dater.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -11,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dater.exception.ConversationNotFoundException;
-import com.dater.model.ChatMessageEntity;
+import com.dater.model.ConversationMessageEntity;
 import com.dater.model.ConversationEntity;
 import com.dater.model.UserEntity;
 import com.dater.repository.ConversationRepository;
@@ -34,7 +33,7 @@ public class ConversationServiceImpl implements ConversationService {
 
 	@Override
 	@Transactional
-	public void addMessage(ChatMessageEntity message) {
+	public void addMessage(ConversationMessageEntity message) {
 		conversationRepository.addMessage(message);
 	}
 
@@ -55,6 +54,18 @@ public class ConversationServiceImpl implements ConversationService {
 	public void addUserToConversation(UserEntity user, String conversationId) {
 		ConversationEntity conversation = this.findById(conversationId);
 		conversation.addUser(user);
+	}
+
+	@Override
+	public ConversationEntity getReference(String conversationId) {
+		return conversationRepository.getReference(conversationId);
+	}
+
+	@Override
+	public List<ConversationMessageEntity> findMessagesForConversation(String conversationId, Pageable pageable) {
+		List<ConversationMessageEntity> messages = conversationRepository.findMessagesForConversation(conversationId, pageable);
+		messages.stream().findFirst().ifPresent(c -> Hibernate.initialize(c.getSender().getPhotos()));
+		return messages;
 	}
 
 }

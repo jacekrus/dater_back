@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -14,13 +15,13 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "messages")
-public class ChatMessageEntity extends BaseEntity {
+public class ConversationMessageEntity extends BaseEntity {
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	private UserEntity sender;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false, updatable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private ConversationEntity conversation;
@@ -31,9 +32,9 @@ public class ChatMessageEntity extends BaseEntity {
 	@Column(nullable = false, length = 500)
 	private String text;
 
-	public ChatMessageEntity() {}
+	public ConversationMessageEntity() {}
 	
-	public ChatMessageEntity(UserEntity sender, ConversationEntity conversation, LocalDateTime sendTime, String text) {
+	public ConversationMessageEntity(UserEntity sender, ConversationEntity conversation, LocalDateTime sendTime, String text) {
 		this.sender = sender;
 		this.conversation = conversation;
 		this.sendTime = sendTime;
@@ -90,7 +91,7 @@ public class ChatMessageEntity extends BaseEntity {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ChatMessageEntity other = (ChatMessageEntity) obj;
+		ConversationMessageEntity other = (ConversationMessageEntity) obj;
 		if (conversation == null) {
 			if (other.conversation != null)
 				return false;

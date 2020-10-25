@@ -1,12 +1,6 @@
 package com.dater.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -23,12 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dater.model.ChatMessageEntity;
-import com.dater.model.ConversationEntity;
-import com.dater.model.Gender;
-import com.dater.model.UserBuilder;
 import com.dater.model.UserEntity;
-import com.dater.service.ConversationService;
 import com.dater.service.UserService;
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -38,9 +27,6 @@ public class UserController {
 	
 	private final UserService userService;
 	private static final String JSON = "application/json";
-	
-	@Autowired
-	private ConversationService svc;
 	
 	@Autowired
 	public UserController(UserService userService) {
@@ -115,11 +101,6 @@ public class UserController {
 	@DeleteMapping
 	public void deleteUser(@RequestParam(name = "id") String id) {
 		userService.removeUser(id);
-	}
-	
-	@GetMapping(value = "/chats")
-	public List<ConversationEntity> findConversationsForUser(Pageable pageable) {
-		return svc.findConversationsForUser(userService.findUserById("4028808c753b9a2501753b9a31e00001"), pageable);
 	}
 	
 	@EventListener(ApplicationStartedEvent.class)

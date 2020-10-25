@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
-import com.dater.model.ChatMessageEntity;
+import com.dater.model.ConversationMessageEntity;
 import com.dater.model.ConversationEntity;
 import com.dater.model.UserEntity;
 
@@ -12,12 +12,16 @@ public interface ConversationService {
 	
 	void addConversation(ConversationEntity conversation);
 	
-	ConversationEntity findById(String conversationId);
+	void addMessage(ConversationMessageEntity message);
 	
 	void addUserToConversation(UserEntity user, String conversationId);
 	
+	ConversationEntity findById(String conversationId);
+	
+	ConversationEntity getReference(String conversationId);
+	
 	List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable);
 	
-	void addMessage(ChatMessageEntity message);
+	List<ConversationMessageEntity> findMessagesForConversation(String conversationId, Pageable pageable);
 
 }
