@@ -25,7 +25,7 @@ public class ConversationRepositoryImpl extends AbstractRepository implements Cu
 
 	@Override
 	public List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable) {
-		String queryString = "from ConversationEntity c where :user member of c.users";
+		String queryString = "from ConversationEntity c where :user member of c.users order by c.lastAccessed desc";
 		TypedQuery<ConversationEntity> query = em.createQuery(queryString, ConversationEntity.class).setParameter("user", user);
 		applyPagination(query, pageable);
 		return query.getResultList();

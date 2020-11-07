@@ -29,12 +29,16 @@ public class ConversationEntity extends BaseEntity {
 	@Column(nullable = false, updatable = false)
 	private String name;
 	
+	@Column(nullable = false)
+	private LocalDateTime lastAccessed;
+	
 	public ConversationEntity() {}
 
 	public ConversationEntity(Set<UserEntity> users, LocalDateTime createTime, String name) {
 		this.users = users;
 		this.createTime = createTime;
 		this.name = name;
+		this.lastAccessed = createTime;
 	}
 
 	public Set<UserEntity> getUsers() {
@@ -67,6 +71,14 @@ public class ConversationEntity extends BaseEntity {
 	
 	public void removeUser(UserEntity user) {
 		users.remove(user);
+	}
+
+	public LocalDateTime getLastAccessed() {
+		return lastAccessed;
+	}
+
+	public void setLastAccessed(LocalDateTime lastAccessed) {
+		this.lastAccessed = lastAccessed;
 	}
 
 	@Override

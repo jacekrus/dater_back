@@ -1,5 +1,6 @@
 package com.dater.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -45,7 +46,7 @@ public class ConversationServiceImpl implements ConversationService {
 	@Override
 	public List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable) {
 		List<ConversationEntity> conversations = conversationRepository.findConversationsForUser(user, pageable);
-		conversations.stream().findFirst().ifPresent(c -> c.getUsers().forEach(u -> Hibernate.initialize(u.getPhotos())));
+		conversations.stream().forEach(c -> c.getUsers().forEach(u -> Hibernate.initialize(u.getPhotos())));
 		return conversations;
 	}
 
@@ -62,9 +63,11 @@ public class ConversationServiceImpl implements ConversationService {
 	}
 
 	@Override
+	@Transactional
 	public List<ConversationMessageEntity> findMessagesForConversation(String conversationId, Pageable pageable) {
+		conversationRepository.findById(conversationId).ifPresent(conv -> conv.setLastAccessed(LocalDateTime.now()));
 		List<ConversationMessageEntity> messages = conversationRepository.findMessagesForConversation(conversationId, pageable);
-		messages.stream().findFirst().ifPresent(c -> Hibernate.initialize(c.getSender().getPhotos()));
+		messages.stream().forEach(c -> Hibernate.initialize(c.getSender().getPhotos()));
 		return messages;
 	}
 
