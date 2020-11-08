@@ -20,6 +20,8 @@ public interface ConversationService {
 	
 	ConversationEntity getReference(String conversationId);
 	
+	ConversationEntity findConversationByUsers(List<UserEntity> users, boolean createIfNotExists);
+	
 	List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable);
 	
 	List<ConversationMessageEntity> findMessagesForConversation(String conversationId, Pageable pageable);

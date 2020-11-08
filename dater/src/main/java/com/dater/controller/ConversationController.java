@@ -55,12 +55,17 @@ public class ConversationController {
 		return convSvc.findConversationsForUser(userSvc.getLoggedInUser(), pageable);
 	}
 	
+	@PostMapping
+	public ConversationEntity findConversationByUsers(@RequestBody List<UserEntity> users, @RequestParam(name = "create", required = false, defaultValue = "false") boolean create) {
+		return convSvc.findConversationByUsers(users, create);
+	}
+	
 	@GetMapping(value = "/messages")
 	public List<ConversationMessageEntity> findMessagesForConversation(@RequestParam(name = "id") String conversationId, Pageable pageable) {
 		return convSvc.findMessagesForConversation(conversationId, pageable);
 	}
 	
-	@PostMapping
+	@PostMapping(value = "/messages")
 	public void addMessageToConversation(@RequestBody TextNode message, @RequestParam(name = "id") String conversationId) {
 		ConversationEntity conversation = convSvc.getReference(conversationId);
 		UserEntity sender = userSvc.getLoggedInUser();

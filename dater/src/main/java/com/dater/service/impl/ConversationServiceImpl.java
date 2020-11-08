@@ -2,6 +2,9 @@ package com.dater.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -63,12 +66,24 @@ public class ConversationServiceImpl implements ConversationService {
 	}
 
 	@Override
-	@Transactional
 	public List<ConversationMessageEntity> findMessagesForConversation(String conversationId, Pageable pageable) {
-		conversationRepository.findById(conversationId).ifPresent(conv -> conv.setLastAccessed(LocalDateTime.now()));
 		List<ConversationMessageEntity> messages = conversationRepository.findMessagesForConversation(conversationId, pageable);
 		messages.stream().forEach(c -> Hibernate.initialize(c.getSender().getPhotos()));
 		return messages;
+	}
+
+	@Override
+	public ConversationEntity findConversationByUsers(List<UserEntity> users, boolean createIfNotExists) {
+		if(users.size() != 2) {
+			throw new IllegalArgumentException("For now only two element list is accepted");
+		}
+		Optional<ConversationEntity> conversation = conversationRepository.findConversationByUsers(users);
+		if(createIfNotExists && conversation.isEmpty()) {
+			ConversationEntity newConversation = new ConversationEntity(Set.of(users.get(0), users.get(1)), LocalDateTime.now(), UUID.randomUUID().toString());
+			conversationRepository.save(newConversation);
+			return newConversation;
+		}
+		return conversation.orElseThrow(() -> new ConversationNotFoundException("Conversation for given users not found"));
 	}
 
 }

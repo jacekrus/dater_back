@@ -29,8 +29,7 @@ public class ConversationEntity extends BaseEntity {
 	@Column(nullable = false, updatable = false)
 	private String name;
 	
-	@Column(nullable = false)
-	private LocalDateTime lastAccessed;
+	private LocalDateTime latestMessageTime;
 	
 	public ConversationEntity() {}
 
@@ -38,7 +37,6 @@ public class ConversationEntity extends BaseEntity {
 		this.users = users;
 		this.createTime = createTime;
 		this.name = name;
-		this.lastAccessed = createTime;
 	}
 
 	public Set<UserEntity> getUsers() {
@@ -73,12 +71,12 @@ public class ConversationEntity extends BaseEntity {
 		users.remove(user);
 	}
 
-	public LocalDateTime getLastAccessed() {
-		return lastAccessed;
+	public LocalDateTime getLatestMessageTime() {
+		return latestMessageTime;
 	}
 
-	public void setLastAccessed(LocalDateTime lastAccessed) {
-		this.lastAccessed = lastAccessed;
+	public void setLatestMessageTime(LocalDateTime latestMessageTime) {
+		this.latestMessageTime = latestMessageTime;
 	}
 
 	@Override
