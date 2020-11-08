@@ -12,9 +12,9 @@ public interface ConversationService {
 	
 	void addConversation(ConversationEntity conversation);
 	
-	void addMessage(ConversationMessageEntity message);
-	
 	void addUserToConversation(UserEntity user, String conversationId);
+	
+	ConversationMessageEntity addMessageToConversation(UserEntity sender, String text, String conversationId);
 	
 	ConversationEntity findById(String conversationId);
 	

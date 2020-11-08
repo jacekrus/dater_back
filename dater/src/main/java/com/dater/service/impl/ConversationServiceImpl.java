@@ -14,8 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dater.exception.ConversationNotFoundException;
-import com.dater.model.ConversationMessageEntity;
 import com.dater.model.ConversationEntity;
+import com.dater.model.ConversationMessageEntity;
 import com.dater.model.UserEntity;
 import com.dater.repository.ConversationRepository;
 import com.dater.service.ConversationService;
@@ -37,8 +37,16 @@ public class ConversationServiceImpl implements ConversationService {
 
 	@Override
 	@Transactional
-	public void addMessage(ConversationMessageEntity message) {
+	public ConversationMessageEntity addMessageToConversation(UserEntity sender, String text, String conversationId) {
+		if(text == null || text.isBlank()) {
+			throw new IllegalArgumentException("Supplied empty message text");
+		}
+		LocalDateTime currentTime = LocalDateTime.now();
+		ConversationEntity conversation = findById(conversationId);
+		ConversationMessageEntity message = new ConversationMessageEntity(sender, conversation, currentTime, text);
 		conversationRepository.addMessage(message);
+		conversation.setLatestMessageTime(currentTime);
+		return message;
 	}
 
 	@Override
@@ -73,11 +81,13 @@ public class ConversationServiceImpl implements ConversationService {
 	}
 
 	@Override
+	@Transactional
 	public ConversationEntity findConversationByUsers(List<UserEntity> users, boolean createIfNotExists) {
 		if(users.size() != 2) {
 			throw new IllegalArgumentException("For now only two element list is accepted");
 		}
 		Optional<ConversationEntity> conversation = conversationRepository.findConversationByUsers(users);
+		conversation.ifPresent(conv -> conv.setLatestMessageTime(LocalDateTime.now()));
 		if(createIfNotExists && conversation.isEmpty()) {
 			ConversationEntity newConversation = new ConversationEntity(Set.of(users.get(0), users.get(1)), LocalDateTime.now(), UUID.randomUUID().toString());
 			conversationRepository.save(newConversation);

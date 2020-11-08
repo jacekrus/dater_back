@@ -26,8 +26,7 @@ public class ConversationRepositoryImpl extends AbstractRepository implements Cu
 
 	@Override
 	public List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable) {
-		// TODO think about nulls last String queryString = "from ConversationEntity c where :user member of c.users order by c.latestMessageTime desc nulls last, c.createTime desc";
-		String queryString = "from ConversationEntity c where :user member of c.users order by c.latestMessageTime desc, c.createTime desc";
+		String queryString = "from ConversationEntity c where :user member of c.users order by c.latestMessageTime desc nulls last, c.createTime desc";
 		TypedQuery<ConversationEntity> query = em.createQuery(queryString, ConversationEntity.class).setParameter("user", user);
 		applyPagination(query, pageable);
 		return query.getResultList();
@@ -40,7 +39,7 @@ public class ConversationRepositoryImpl extends AbstractRepository implements Cu
 
 	@Override
 	public List<ConversationMessageEntity> findMessagesForConversation(String conversationId, Pageable pageable) {
-		String queryString = "from ConversationMessageEntity m join fetch m.sender where m.conversation.id = :id";
+		String queryString = "from ConversationMessageEntity m left join fetch m.sender where m.conversation.id = :id order by m.sendTime desc";
 		TypedQuery<ConversationMessageEntity> query = em.createQuery(queryString, ConversationMessageEntity.class).setParameter("id", conversationId);
 		applyPagination(query, pageable);
 		return query.getResultList();
@@ -52,7 +51,7 @@ public class ConversationRepositoryImpl extends AbstractRepository implements Cu
 			throw new IllegalArgumentException("For now only two element list is accepted");
 		}
 		String queryString = "from ConversationEntity c where :user1 member of c.users and :user2 member of c.users"
-				+ " and c.users.size=2 order by c.latestMessageTime desc nulls last, c.createTime desc";
+				+ " and size(c.users)=2 order by c.latestMessageTime desc nulls last, c.createTime desc";
 		TypedQuery<ConversationEntity> query = em.createQuery(queryString, ConversationEntity.class).setParameter("user1", users.get(0)).setParameter("user2", users.get(1));
 		query.setMaxResults(1);
 		List<ConversationEntity> result = query.getResultList();

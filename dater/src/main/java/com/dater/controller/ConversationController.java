@@ -66,11 +66,8 @@ public class ConversationController {
 	}
 	
 	@PostMapping(value = "/messages")
-	public void addMessageToConversation(@RequestBody TextNode message, @RequestParam(name = "id") String conversationId) {
-		ConversationEntity conversation = convSvc.getReference(conversationId);
-		UserEntity sender = userSvc.getLoggedInUser();
-		LocalDateTime currentDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.now());
-		convSvc.addMessage(new ConversationMessageEntity(sender, conversation, currentDateTime, message.asText()));
+	public ConversationMessageEntity addMessageToConversation(@RequestBody TextNode message, @RequestParam(name = "id") String conversationId) {
+		return convSvc.addMessageToConversation(userSvc.getLoggedInUser(), message.asText(), conversationId);
 	}
 
 }
