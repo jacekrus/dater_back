@@ -54,7 +54,7 @@ public final class UserMessages {
 	
 	public static final String DATE_TOO_OLD = "Date of birth cannot be from more than 100 years ago.";
 	
-	public static final String DATE_TOO_YOUNG = "You have to be older than 18 years to create an account.";
+	public static final String DATE_TOO_YOUNG = "You have to at least 18 to create an account.";
 	
 	public static final String LOCATION_EMPTY = "Location cannot be empty.";
 	
