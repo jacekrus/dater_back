@@ -58,7 +58,7 @@ public final class UserMessages {
 	
 	public static final String LOCATION_EMPTY = "Location cannot be empty.";
 	
-	public static final String LOCATION_INVALID_CHARS = "Location contains invalid characters, only letters are allowed separated by a space [country city].";
+	public static final String LOCATION_INVALID_CHARS = "Location contains invalid characters. Do not use spaces at the beginning or non location name characters ($, %, *, etc.).";
 	
 	public static final String GENDER_EMPTY = "Gender has not been selected.";
 	

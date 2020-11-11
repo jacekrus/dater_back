@@ -14,6 +14,7 @@ import static com.dater.service.impl.UserMessages.*;
 public class UserValidator {
 	
 	private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern VALID_CITY_NAME_REGEX = Pattern.compile("^([a-z\u0080-\u024F]+(?:. |-| |'))*[a-z\u0080-\u024F]*$", Pattern.CASE_INSENSITIVE);
 
 	private UserValidator() {}
 	
@@ -41,6 +42,17 @@ public class UserValidator {
 	public void validateWithPhotos(UserEntity user) {
 		validate(user);
 		validatePhotos(user);
+	}
+	
+	public void validateLocation(UserEntity user) {
+		String location = user.getLocation();
+		if(isNullOrBlank(location)) {
+			throw new UserValidationException(LOCATION_EMPTY);
+		}
+		Matcher matcher = VALID_CITY_NAME_REGEX.matcher(location);
+		if(!matcher.find()) {
+			throw new UserValidationException(LOCATION_INVALID_CHARS);
+		}
 	}
 	
 	private void validateUsername(UserEntity user) {
@@ -99,16 +111,6 @@ public class UserValidator {
 		}
 	}
 	
-	private void validateLocation(UserEntity user) {
-		String location = user.getLocation();
-		if(isNullOrBlank(location)) {
-			throw new UserValidationException(LOCATION_EMPTY);
-		}
-		if(!containsOnlyLetters(location)) {
-			throw new UserValidationException(LOCATION_INVALID_CHARS);
-		}
-	}
-	
 	private void validateGender(UserEntity user) {
 		Gender gender = user.getGender();
 		if(gender == null) {
@@ -135,16 +137,6 @@ public class UserValidator {
 	
 	private boolean isNullOrBlank(String value) {
 		return value == null || value.isBlank();
-	}
-	
-	private boolean containsOnlyLetters(String value) {
-		char[] chars = value.toCharArray();
-		for(char c : chars) {
-			if(!Character.isLetter(c) && !Character.isSpaceChar(c)) {
-				return false;
-			}
-		}
-		return true;
 	}
 	
 	private boolean hasInvalidCharacters(String value) {

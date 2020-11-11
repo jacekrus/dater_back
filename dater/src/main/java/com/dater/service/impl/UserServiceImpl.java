@@ -77,6 +77,7 @@ public class UserServiceImpl implements UserService {
 			loggedInUser.setPreference(user.getPreference());
 		}
 		if(user.getLocation() != null) {
+			UserValidator.getInstance().validateLocation(user);
 			loggedInUser.setLocation(user.getLocation());
 		}
 		if(user.getPhotos() != null) {
