@@ -66,7 +66,7 @@ public class ConversationController {
 	}
 	
 	@PostMapping(value = "/messages")
-	public ConversationMessageEntity addMessageToConversation(@RequestBody TextNode message, @RequestParam(name = "id") String conversationId) {
+	public ConversationMessageEntity addMessageToConversation(@RequestBody TextNode message, @RequestParam(name= "id") String conversationId) {
 		return convSvc.addMessageToConversation(userSvc.getLoggedInUser(), message.asText(), conversationId);
 	}
 
