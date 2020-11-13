@@ -7,12 +7,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.springframework.data.domain.Pageable;
-
 import com.dater.model.ConversationEntity;
 import com.dater.model.ConversationMessageEntity;
 import com.dater.model.UserEntity;
 import com.dater.repository.CustomConversationRepository;
+import com.dater.repository.SkippingPageable;
 
 public class ConversationRepositoryImpl extends AbstractRepository implements CustomConversationRepository {
 	
@@ -25,7 +24,7 @@ public class ConversationRepositoryImpl extends AbstractRepository implements Cu
 	}
 
 	@Override
-	public List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable) {
+	public List<ConversationEntity> findConversationsForUser(UserEntity user, SkippingPageable pageable) {
 		String queryString = "from ConversationEntity c where :user member of c.users order by c.latestMessageTime desc nulls last, c.createTime desc";
 		TypedQuery<ConversationEntity> query = em.createQuery(queryString, ConversationEntity.class).setParameter("user", user);
 		applyPagination(query, pageable);
@@ -38,7 +37,7 @@ public class ConversationRepositoryImpl extends AbstractRepository implements Cu
 	}
 
 	@Override
-	public List<ConversationMessageEntity> findMessagesForConversation(String conversationId, Pageable pageable) {
+	public List<ConversationMessageEntity> findMessagesForConversation(String conversationId, SkippingPageable pageable) {
 		String queryString = "from ConversationMessageEntity m left join fetch m.sender where m.conversation.id = :id order by m.sendTime desc";
 		TypedQuery<ConversationMessageEntity> query = em.createQuery(queryString, ConversationMessageEntity.class).setParameter("id", conversationId);
 		applyPagination(query, pageable);

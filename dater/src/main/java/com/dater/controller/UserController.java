@@ -7,6 +7,8 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dater.model.UserEntity;
+import com.dater.repository.impl.PageWithSkipRequest;
 import com.dater.service.UserService;
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -50,22 +53,22 @@ public class UserController {
 	
 	@GetMapping(value = "/favorites", produces = JSON)
 	public List<UserEntity> getFavorites(Pageable pageable) {
-		return userService.findFavoritesForUser(getLoggedInUser().getId(), pageable);
+		return userService.findFavoritesForUser(getLoggedInUser().getId(), new PageWithSkipRequest(pageable));
 	}
 	
 	@GetMapping(value = "/likedby", produces = JSON)
 	public List<UserEntity> getLikedBy(Pageable pageable) {
-		return userService.findLikedByForUser(getLoggedInUser().getId(), pageable);
+		return userService.findLikedByForUser(getLoggedInUser().getId(), new PageWithSkipRequest(pageable));
 	}
 	
 	@GetMapping(value = "/dates", produces = JSON)
 	public List<UserEntity> getDates(Pageable pageable) {
-		return userService.findDatesForUser(getLoggedInUser().getId(), pageable);
+		return userService.findDatesForUser(getLoggedInUser().getId(), new PageWithSkipRequest(pageable));
 	}
 	
 	@PostMapping(consumes = JSON, produces = JSON)
 	public List<UserEntity> getUsers(@RequestBody UserEntity exampleUser, Pageable pageable) {
-		return userService.findUsers(Example.of(exampleUser), pageable);
+		return userService.findUsers(Example.of(exampleUser), new PageWithSkipRequest(pageable));
 	}
 
 	@PostMapping(value = "/add", consumes = JSON)
@@ -79,8 +82,9 @@ public class UserController {
 	}
 	
 	@PutMapping(value = "/like")
-	public void addFavoriteUser(@RequestParam(name = "id") String id) {
-		userService.addFavoriteUser(id);
+	public ResponseEntity<Void> addFavoriteUser(@RequestParam(name = "id") String id) {
+		boolean dateCreated = userService.addFavoriteUser(id);
+		return dateCreated ? new ResponseEntity<>(HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@PutMapping

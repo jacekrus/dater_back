@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dater.model.ConversationEntity;
 import com.dater.model.ConversationMessageEntity;
 import com.dater.model.UserEntity;
+import com.dater.repository.impl.PageWithSkipRequest;
 import com.dater.service.ConversationService;
 import com.dater.service.UserService;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -49,17 +50,19 @@ public class ConversationController {
 	
 	@GetMapping
 	public List<ConversationEntity> findConversationsForUser(Pageable pageable) {
-		return convSvc.findConversationsForUser(userSvc.getLoggedInUser(), pageable);
+		return convSvc.findConversationsForUser(userSvc.getLoggedInUser(), new PageWithSkipRequest(pageable));
 	}
 	
 	@PostMapping
-	public ConversationEntity findConversationByUsers(@RequestBody List<UserEntity> users, @RequestParam(name = "create", required = false, defaultValue = "false") boolean create) {
+	public ConversationEntity findConversationByUsers(@RequestBody List<UserEntity> users, 
+			@RequestParam(name = "create", required = false, defaultValue = "false") boolean create) {
 		return convSvc.findConversationByUsers(users, create);
 	}
 	
 	@GetMapping(value = "/messages")
-	public List<ConversationMessageEntity> findMessagesForConversation(@RequestParam(name = "id") String conversationId, Pageable pageable) {
-		return convSvc.findMessagesForConversation(conversationId, pageable);
+	public List<ConversationMessageEntity> findMessagesForConversation(@RequestParam(name = "id") String conversationId, 
+			@RequestParam(name = "skip", required = false, defaultValue = "0") int skip, Pageable pageable) {
+		return convSvc.findMessagesForConversation(conversationId, new PageWithSkipRequest(pageable, skip));
 	}
 	
 	@PostMapping(value = "/messages")

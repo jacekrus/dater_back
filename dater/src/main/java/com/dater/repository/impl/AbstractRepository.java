@@ -2,14 +2,14 @@ package com.dater.repository.impl;
 
 import javax.persistence.Query;
 
-import org.springframework.data.domain.Pageable;
+import com.dater.repository.SkippingPageable;
 
 public abstract class AbstractRepository {
 	
-	protected void applyPagination(Query query, Pageable pageable) {
+	protected void applyPagination(Query query, SkippingPageable pageable) {
 		int pageNumber = pageable.getPageNumber();
 		int pageSize = pageable.getPageSize();
-		query.setFirstResult(pageSize * pageNumber).setMaxResults(pageSize);
+		query.setFirstResult((pageSize * pageNumber) + pageable.getSkip()).setMaxResults(pageSize);
 	}
 
 }

@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Pageable;
-
 import com.dater.model.Gender;
 import com.dater.model.UserEntity;
 
@@ -19,11 +17,11 @@ public interface CustomUserRepository {
 	
 	UserEntity getUserReference(String userId);
 	
-	List<String> findFavoriteIdsForUser(UserEntity user, Pageable pageable);
+	List<String> findFavoriteIdsForUser(UserEntity user, SkippingPageable pageable);
 	
-	List<String> findDateIdsForUser(UserEntity user, Pageable pageable);
+	List<String> findDateIdsForUser(UserEntity user, SkippingPageable pageable);
 	
-	List<String> findLikedByIdsForUser(UserEntity user, Pageable pageable);
+	List<String> findLikedByIdsForUser(UserEntity user, SkippingPageable pageable);
 	
 	List<UserEntity> findRecommended(Gender userGender, Optional<Gender> preferredGender);
 	

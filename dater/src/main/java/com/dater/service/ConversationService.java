@@ -2,11 +2,10 @@ package com.dater.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
-
-import com.dater.model.ConversationMessageEntity;
 import com.dater.model.ConversationEntity;
+import com.dater.model.ConversationMessageEntity;
 import com.dater.model.UserEntity;
+import com.dater.repository.SkippingPageable;
 
 public interface ConversationService {
 	
@@ -22,8 +21,8 @@ public interface ConversationService {
 	
 	ConversationEntity findConversationByUsers(List<UserEntity> users, boolean createIfNotExists);
 	
-	List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable);
+	List<ConversationEntity> findConversationsForUser(UserEntity user, SkippingPageable pageable);
 	
-	List<ConversationMessageEntity> findMessagesForConversation(String conversationId, Pageable pageable);
+	List<ConversationMessageEntity> findMessagesForConversation(String conversationId, SkippingPageable pageable);
 
 }
