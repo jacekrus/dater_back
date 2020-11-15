@@ -50,7 +50,7 @@ public class ConversationController {
 	
 	@GetMapping
 	public List<ConversationEntity> findConversationsForUser(Pageable pageable) {
-		return convSvc.findConversationsForUser(userSvc.getLoggedInUser(), new PageWithSkipRequest(pageable));
+		return convSvc.findConversationsForUser(userSvc.getLoggedInUser(), pageable);
 	}
 	
 	@PostMapping

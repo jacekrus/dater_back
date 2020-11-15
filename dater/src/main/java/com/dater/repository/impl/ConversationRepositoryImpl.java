@@ -7,6 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.data.domain.Pageable;
+
 import com.dater.model.ConversationEntity;
 import com.dater.model.ConversationMessageEntity;
 import com.dater.model.UserEntity;
@@ -24,7 +26,7 @@ public class ConversationRepositoryImpl extends AbstractRepository implements Cu
 	}
 
 	@Override
-	public List<ConversationEntity> findConversationsForUser(UserEntity user, SkippingPageable pageable) {
+	public List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable) {
 		String queryString = "from ConversationEntity c where :user member of c.users order by c.latestMessageTime desc nulls last, c.createTime desc";
 		TypedQuery<ConversationEntity> query = em.createQuery(queryString, ConversationEntity.class).setParameter("user", user);
 		applyPagination(query, pageable);

@@ -3,10 +3,10 @@ package com.dater.service;
 import java.util.List;
 
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.dater.model.UserEntity;
-import com.dater.repository.SkippingPageable;
 
 public interface UserService extends UserDetailsService {
 	
@@ -32,12 +32,12 @@ public interface UserService extends UserDetailsService {
 	
 	List<UserEntity> findRecommendedForUser(String userId);
 	
-	List<UserEntity> findUsers(Example<UserEntity> example, SkippingPageable pageable); 
+	List<UserEntity> findUsers(Example<UserEntity> example, Pageable pageable); 
 	
-	List<UserEntity> findFavoritesForUser(String userId, SkippingPageable pageable);
+	List<UserEntity> findFavoritesForUser(String userId, Pageable pageable);
 	
-	List<UserEntity> findLikedByForUser(String userId, SkippingPageable pageable);
+	List<UserEntity> findLikedByForUser(String userId, Pageable pageable);
 	
-	List<UserEntity> findDatesForUser(String userId, SkippingPageable pageable);
+	List<UserEntity> findDatesForUser(String userId, Pageable pageable);
 
 }

@@ -21,6 +21,7 @@ import javax.transaction.Transactional;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,7 +36,6 @@ import com.dater.exception.UserNotFoundException;
 import com.dater.exception.UserValidationException;
 import com.dater.model.Gender;
 import com.dater.model.UserEntity;
-import com.dater.repository.SkippingPageable;
 import com.dater.repository.UserRepository;
 import com.dater.service.UserService;
 
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserEntity> findUsers(Example<UserEntity> example, SkippingPageable pageable) {
+	public List<UserEntity> findUsers(Example<UserEntity> example, Pageable pageable) {
 		return userRepository.findAll(example, pageable).getContent();
 	}
 
@@ -179,19 +179,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserEntity> findFavoritesForUser(String userId, SkippingPageable pageable) {
+	public List<UserEntity> findFavoritesForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findFavoriteIdsForUser(userRepository.getUserReference(userId), pageable);
 		return userRepository.findUsersByIdWithPhotos(ids);
 	}
 	
 	@Override
-	public List<UserEntity> findLikedByForUser(String userId, SkippingPageable pageable) {
+	public List<UserEntity> findLikedByForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findLikedByIdsForUser(userRepository.getUserReference(userId), pageable);
 		return userRepository.findUsersByIdWithPhotos(ids);
 	}
 	
 	@Override
-	public List<UserEntity> findDatesForUser(String userId, SkippingPageable pageable) {
+	public List<UserEntity> findDatesForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findDateIdsForUser(userRepository.getUserReference(userId), pageable);
 		return userRepository.findUsersByIdWithPhotos(ids);
 	}

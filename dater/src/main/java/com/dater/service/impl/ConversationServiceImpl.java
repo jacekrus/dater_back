@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dater.exception.ConversationNotFoundException;
@@ -55,7 +56,7 @@ public class ConversationServiceImpl implements ConversationService {
 	}
 
 	@Override
-	public List<ConversationEntity> findConversationsForUser(UserEntity user, SkippingPageable pageable) {
+	public List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable) {
 		List<ConversationEntity> conversations = conversationRepository.findConversationsForUser(user, pageable);
 		conversations.stream().forEach(c -> c.getUsers().forEach(u -> Hibernate.initialize(u.getPhotos())));
 		return conversations;

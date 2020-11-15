@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dater.model.UserEntity;
-import com.dater.repository.impl.PageWithSkipRequest;
 import com.dater.service.UserService;
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -53,22 +52,22 @@ public class UserController {
 	
 	@GetMapping(value = "/favorites", produces = JSON)
 	public List<UserEntity> getFavorites(Pageable pageable) {
-		return userService.findFavoritesForUser(getLoggedInUser().getId(), new PageWithSkipRequest(pageable));
+		return userService.findFavoritesForUser(getLoggedInUser().getId(), pageable);
 	}
 	
 	@GetMapping(value = "/likedby", produces = JSON)
 	public List<UserEntity> getLikedBy(Pageable pageable) {
-		return userService.findLikedByForUser(getLoggedInUser().getId(), new PageWithSkipRequest(pageable));
+		return userService.findLikedByForUser(getLoggedInUser().getId(), pageable);
 	}
 	
 	@GetMapping(value = "/dates", produces = JSON)
 	public List<UserEntity> getDates(Pageable pageable) {
-		return userService.findDatesForUser(getLoggedInUser().getId(), new PageWithSkipRequest(pageable));
+		return userService.findDatesForUser(getLoggedInUser().getId(), pageable);
 	}
 	
 	@PostMapping(consumes = JSON, produces = JSON)
 	public List<UserEntity> getUsers(@RequestBody UserEntity exampleUser, Pageable pageable) {
-		return userService.findUsers(Example.of(exampleUser), new PageWithSkipRequest(pageable));
+		return userService.findUsers(Example.of(exampleUser), pageable);
 	}
 
 	@PostMapping(value = "/add", consumes = JSON)
