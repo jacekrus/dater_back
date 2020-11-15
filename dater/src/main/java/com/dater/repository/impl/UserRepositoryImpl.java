@@ -58,7 +58,7 @@ public class UserRepositoryImpl extends AbstractRepository implements CustomUser
 	public List<String> findDateIdsForUser(UserEntity user, Pageable pageable) {	
 		String queryString = "select u.id from UserEntity u "
 				+ "join DateEntity d on d.firstUser.id = u.id or d.secondUser.id = u.id "
-				+ "where (d.firstUser.id = :id or d.secondUser.id = :id) and u.id != :id";
+				+ "where (d.firstUser.id = :id or d.secondUser.id = :id) and u.id != :id order by d.createTime desc nulls last";
 		TypedQuery<String> query = em.createQuery(queryString, String.class).setParameter("id", user.getId());
 		applyPagination(query, pageable);
 		return query.getResultList();
@@ -71,7 +71,7 @@ public class UserRepositoryImpl extends AbstractRepository implements CustomUser
 	
 	@Override
 	public List<String> findLikedByIdsForUser(UserEntity user, Pageable pageable) {
-		String queryString = "select f.owner.id from FavoriteEntity f where f.ownersFavorite = :ownersFavorite";
+		String queryString = "select f.owner.id from FavoriteEntity f where f.ownersFavorite = :ownersFavorite order by f.createTime desc nulls last";
 		TypedQuery<String> query = em.createQuery(queryString, String.class).setParameter("ownersFavorite", user);
 		applyPagination(query, pageable);
 		return query.getResultList();
@@ -87,7 +87,7 @@ public class UserRepositoryImpl extends AbstractRepository implements CustomUser
 
 	@Override
 	public List<String> findFavoriteIdsForUser(UserEntity user, Pageable pageable) {
-		String queryString = "select f.ownersFavorite.id from FavoriteEntity f where f.owner = :owner";
+		String queryString = "select f.ownersFavorite.id from FavoriteEntity f where f.owner = :owner order by f.createTime desc nulls last";
 		TypedQuery<String> query = em.createQuery(queryString, String.class).setParameter("owner", user);
 		applyPagination(query, pageable);
 		return query.getResultList();

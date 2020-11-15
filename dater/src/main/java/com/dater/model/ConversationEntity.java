@@ -9,8 +9,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "conversations")
@@ -30,6 +33,10 @@ public class ConversationEntity extends BaseEntity {
 	private String name;
 	
 	private LocalDateTime latestMessageTime;
+	
+	@Transient
+	@JsonSerialize
+	private boolean hasUnreadMessages;
 	
 	public ConversationEntity() {}
 
@@ -77,6 +84,14 @@ public class ConversationEntity extends BaseEntity {
 
 	public void setLatestMessageTime(LocalDateTime latestMessageTime) {
 		this.latestMessageTime = latestMessageTime;
+	}
+
+	public boolean isHasUnreadMessages() {
+		return hasUnreadMessages;
+	}
+
+	public void setHasUnreadMessages(boolean hasUnreadMessages) {
+		this.hasUnreadMessages = hasUnreadMessages;
 	}
 
 	@Override

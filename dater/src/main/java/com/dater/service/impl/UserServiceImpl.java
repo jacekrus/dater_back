@@ -13,6 +13,7 @@ import static com.dater.service.impl.UserMessages.USER_ALREADY_EXISTS;
 import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_ID;
 import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_USERNAME;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -181,19 +182,19 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserEntity> findFavoritesForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findFavoriteIdsForUser(userRepository.getUserReference(userId), pageable);
-		return userRepository.findUsersByIdWithPhotos(ids);
+		return sortWithIdOrder(ids, userRepository.findUsersByIdWithPhotos(ids));
 	}
 	
 	@Override
 	public List<UserEntity> findLikedByForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findLikedByIdsForUser(userRepository.getUserReference(userId), pageable);
-		return userRepository.findUsersByIdWithPhotos(ids);
+		return sortWithIdOrder(ids, userRepository.findUsersByIdWithPhotos(ids));
 	}
 	
 	@Override
 	public List<UserEntity> findDatesForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findDateIdsForUser(userRepository.getUserReference(userId), pageable);
-		return userRepository.findUsersByIdWithPhotos(ids);
+		return sortWithIdOrder(ids, userRepository.findUsersByIdWithPhotos(ids));
 	}
 	
 	@Override
@@ -219,5 +220,10 @@ public class UserServiceImpl implements UserService {
 	private void updateCache(UserEntity user) {
 		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(newAuth);
+	}
+	
+	private List<UserEntity> sortWithIdOrder(List<String> ids, List<UserEntity> users) {
+		Collections.sort(users, (left, right) -> Integer.compare(ids.indexOf(left.getId()), ids.indexOf(right.getId())));
+		return users;
 	}
 }

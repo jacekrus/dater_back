@@ -1,5 +1,8 @@
 package com.dater.model;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,11 +25,15 @@ public class FavoriteEntity extends BaseEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private UserEntity ownersFavorite;
 	
+	@Column(updatable = false)
+	private LocalDateTime createTime;
+	
 	public FavoriteEntity() {}
 
 	public FavoriteEntity(UserEntity owner, UserEntity ownersFavorite) {
 		this.owner = owner;
 		this.ownersFavorite = ownersFavorite;
+		this.createTime = LocalDateTime.now();
 	}
 
 	public UserEntity getOwner() {
@@ -45,10 +52,19 @@ public class FavoriteEntity extends BaseEntity {
 		this.ownersFavorite = ownersFavorite;
 	}
 
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime createTime) {
+		this.createTime = createTime;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
 		result = prime * result + ((ownersFavorite == null) ? 0 : ownersFavorite.hashCode());
 		return result;
@@ -63,6 +79,11 @@ public class FavoriteEntity extends BaseEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		FavoriteEntity other = (FavoriteEntity) obj;
+		if (createTime == null) {
+			if (other.createTime != null)
+				return false;
+		} else if (!createTime.equals(other.createTime))
+			return false;
 		if (owner == null) {
 			if (other.owner != null)
 				return false;

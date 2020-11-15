@@ -1,5 +1,8 @@
 package com.dater.model;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,11 +25,15 @@ public class DateEntity extends BaseEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private UserEntity secondUser;
 	
+	@Column(updatable = false)
+	private LocalDateTime createTime;
+	
 	public DateEntity() {}
 
 	public DateEntity(UserEntity firstUser, UserEntity secondUser) {
 		this.firstUser = firstUser;
 		this.secondUser = secondUser;
+		this.createTime = LocalDateTime.now();
 	}
 
 	public UserEntity getFirstUser() {
@@ -45,10 +52,19 @@ public class DateEntity extends BaseEntity {
 		this.secondUser = secondUser;
 	}
 
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime createTime) {
+		this.createTime = createTime;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
 		result = prime * result + ((firstUser == null) ? 0 : firstUser.hashCode());
 		result = prime * result + ((secondUser == null) ? 0 : secondUser.hashCode());
 		return result;
@@ -63,6 +79,11 @@ public class DateEntity extends BaseEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		DateEntity other = (DateEntity) obj;
+		if (createTime == null) {
+			if (other.createTime != null)
+				return false;
+		} else if (!createTime.equals(other.createTime))
+			return false;
 		if (firstUser == null) {
 			if (other.firstUser != null)
 				return false;
