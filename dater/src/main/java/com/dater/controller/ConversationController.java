@@ -4,9 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,18 +31,6 @@ public class ConversationController {
 	public ConversationController(ConversationService convSvc, UserService userSvc) {
 		this.convSvc = convSvc;
 		this.userSvc = userSvc;
-	}
-
-	@MessageMapping("/chat.register")
-	@SendTo("/topic/public")
-	public ConversationMessageEntity register(@Payload ConversationMessageEntity msg) {
-		return msg;
-	}
-	
-	@MessageMapping("/chat.send")
-	@SendTo("/topic/public")
-	public ConversationMessageEntity sendMessage(@Payload ConversationMessageEntity msg) {
-		return msg;
 	}
 	
 	@GetMapping
