@@ -46,12 +46,13 @@ public class UserRepositoryImpl extends AbstractRepository implements CustomUser
 	}
 	
 	@Override
-	public boolean isFavorite(UserEntity user, UserEntity favorite) {
-		String queryString = "select count(f) > 0 from FavoriteEntity f where f.owner = :owner and f.ownersFavorite = :ownersFavorite";
-		TypedQuery<Boolean> query = em.createQuery(queryString, Boolean.class)
+	public Optional<FavoriteEntity> isFavorite(UserEntity user, UserEntity favorite) {
+		String queryString = "from FavoriteEntity f where f.owner = :owner and f.ownersFavorite = :ownersFavorite";
+		TypedQuery<FavoriteEntity> query = em.createQuery(queryString, FavoriteEntity.class)
 				.setParameter("owner", user)
 				.setParameter("ownersFavorite", favorite);
-		return query.getSingleResult();
+		List<FavoriteEntity> result = query.getResultList();
+		return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
 	}
 	
 	@Override

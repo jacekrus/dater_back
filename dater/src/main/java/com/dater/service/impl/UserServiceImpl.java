@@ -13,6 +13,7 @@ import static com.dater.service.impl.UserMessages.USER_ALREADY_EXISTS;
 import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_ID;
 import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_USERNAME;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,8 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,6 +38,7 @@ import org.springframework.stereotype.Service;
 import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
 import com.dater.exception.UserValidationException;
+import com.dater.model.FavoriteEntity;
 import com.dater.model.Gender;
 import com.dater.model.UserEntity;
 import com.dater.repository.UserRepository;
@@ -166,17 +170,24 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public boolean addFavoriteUser(String id) {
+	public ResponseEntity<String> addFavoriteUser(String id) {
 		UserEntity loggedInUser = userRepository.getUserReference(getLoggedInUser().getId());
 		UserEntity potentialDate = userRepository.getUserReference(id);
-		if(!userRepository.isFavorite(loggedInUser, potentialDate)) {
+		Optional<FavoriteEntity> favorite = userRepository.isFavorite(loggedInUser, potentialDate);
+		if(!favorite.isPresent()) {
 			userRepository.addFavorite(loggedInUser, potentialDate);
-			if(userRepository.isFavorite(potentialDate, loggedInUser)) {
+			if(userRepository.isFavorite(potentialDate, loggedInUser).isPresent()) {
 				userRepository.createDate(loggedInUser, potentialDate);
-				return true;
+				return new ResponseEntity<>(HttpStatus.CREATED);
+			}
+			else {
+				return new ResponseEntity<>("Favorite added", HttpStatus.OK);
 			}
 		}
-		return false;
+		else {
+			favorite.get().setCreateTime(LocalDateTime.now());
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.dater.model.UserEntity;
@@ -16,8 +17,6 @@ public interface UserService extends UserDetailsService {
 	
 	void removeUser(String id);
 	
-	boolean addFavoriteUser(String id);
-	
 	UserEntity updateUser(UserEntity user);
 	
 	UserEntity setProfilePhoto(String photo);
@@ -29,6 +28,8 @@ public interface UserService extends UserDetailsService {
 	UserEntity getLoggedInUser();
 	
 	UserEntity getReference(String id);
+	
+	ResponseEntity<String> addFavoriteUser(String id);
 	
 	List<UserEntity> findRecommendedForUser(String userId);
 	

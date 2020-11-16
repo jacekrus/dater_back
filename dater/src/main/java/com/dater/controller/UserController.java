@@ -7,7 +7,6 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,9 +80,8 @@ public class UserController {
 	}
 	
 	@PutMapping(value = "/like")
-	public ResponseEntity<Void> addFavoriteUser(@RequestParam(name = "id") String id) {
-		boolean dateCreated = userService.addFavoriteUser(id);
-		return dateCreated ? new ResponseEntity<>(HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.OK);
+	public ResponseEntity<String> addFavoriteUser(@RequestParam(name = "id") String id) {
+		return userService.addFavoriteUser(id);
 	}
 	
 	@PutMapping

@@ -2,7 +2,6 @@ package com.dater.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -25,7 +24,6 @@ public class FavoriteEntity extends BaseEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private UserEntity ownersFavorite;
 	
-	@Column(updatable = false)
 	private LocalDateTime createTime;
 	
 	public FavoriteEntity() {}
