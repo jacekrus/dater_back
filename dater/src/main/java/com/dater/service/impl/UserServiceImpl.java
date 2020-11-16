@@ -22,6 +22,7 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.dater.event.DateCreatedEvent;
+import com.dater.event.FavoriteAddedEvent;
+import com.dater.event.UserLikedEvent;
 import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
 import com.dater.exception.UserValidationException;
@@ -48,10 +52,12 @@ import com.dater.service.UserService;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository) {
+	public UserServiceImpl(UserRepository userRepository, ApplicationEventPublisher eventPublisher) {
 		this.userRepository = userRepository;
+		this.eventPublisher = eventPublisher;
 	}
 
 	@Override
@@ -60,37 +66,37 @@ public class UserServiceImpl implements UserService {
 		checkDoesNotAlreadyExist(userEntity);
 		userEntity.setPassword(new BCryptPasswordEncoder().encode(userEntity.getPassword()));
 		userEntity.setRole("USER");
-		if(userEntity.getPreference() == null) {
+		if (userEntity.getPreference() == null) {
 			userEntity.setPreference(userEntity.getGender() == Gender.MALE ? Gender.FEMALE : Gender.MALE);
 		}
 		userRepository.save(userEntity);
 	}
-	
+
 	@Override
 	public void validateUser(UserEntity userEntity) {
 		UserValidator.getInstance().validate(userEntity);
 		checkDoesNotAlreadyExist(userEntity);
 	}
-	
+
 	@Override
 	public UserEntity updateUser(UserEntity user) {
 		UserEntity loggedInUser = getLoggedInUserForUpdate();
-		if(user.getDescription() != null) {
+		if (user.getDescription() != null) {
 			loggedInUser.setDescription(user.getDescription());
 		}
-		if(user.getPreference() != loggedInUser.getPreference()) {
+		if (user.getPreference() != loggedInUser.getPreference()) {
 			loggedInUser.setPreference(user.getPreference());
 		}
-		if(user.getLocation() != null) {
+		if (user.getLocation() != null) {
 			UserValidator.getInstance().validateLocation(user);
 			loggedInUser.setLocation(user.getLocation());
 		}
-		if(user.getPhotos() != null) {
+		if (user.getPhotos() != null) {
 			List<String> photos = loggedInUser.getPhotos();
-			if(user.getPhotos().size() + photos.size() > 4) {
+			if (user.getPhotos().size() + photos.size() > 4) {
 				throw new UserValidationException(MAX_PHOTOS_EXECEEDED);
 			}
-			if(!loggedInUser.addPhotos(user.getPhotos())) {
+			if (!loggedInUser.addPhotos(user.getPhotos())) {
 				throw new UserValidationException(ERROR_ADDING_PHOTOS + TRY_AGAIN_OR_CONTACT);
 			}
 		}
@@ -98,11 +104,11 @@ public class UserServiceImpl implements UserService {
 		updateCache(updatedUser);
 		return updatedUser;
 	}
-	
+
 	@Override
 	public UserEntity setProfilePhoto(String photo) {
 		UserEntity loggedInUser = getLoggedInUserForUpdate();
-		if(!validatePhotoExistsInUserGallery(loggedInUser, photo)) {
+		if (!validatePhotoExistsInUserGallery(loggedInUser, photo)) {
 			throw new UserValidationException(ERROR_SETTING_PROFILE_PHOTO + PHOTO_NOT_FOUND);
 		}
 		loggedInUser.setProfilePhoto(photo);
@@ -114,10 +120,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserEntity removePhoto(String photo) {
 		UserEntity loggedInUser = getLoggedInUserForUpdate();
-		if(!validatePhotoExistsInUserGallery(loggedInUser, photo)) {
+		if (!validatePhotoExistsInUserGallery(loggedInUser, photo)) {
 			throw new UserValidationException(ERROR_REMOVING_PHOTO + PHOTO_NOT_FOUND);
 		}
-		if(loggedInUser.getPhotos().size() < 2) {
+		if (loggedInUser.getPhotos().size() < 2) {
 			throw new UserValidationException(ERROR_REMOVING_PHOTO + PHOTO_REQUIRED);
 		}
 		loggedInUser.removePhoto(photo);
@@ -129,7 +135,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserEntity> findRecommendedForUser(String userId) {
 		UserEntity user = findUserById(userId);
-		List<UserEntity> recommended = userRepository.findRecommended(user.getGender(), Optional.ofNullable(user.getPreference()));
+		List<UserEntity> recommended = userRepository.findRecommended(user.getGender(),
+				Optional.ofNullable(user.getPreference()));
 		recommended.stream().findFirst().ifPresent(rec -> Hibernate.initialize(rec.getPhotos()));
 		return recommended;
 	}
@@ -147,22 +154,24 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserEntity findUserById(String id) {
-		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_BY_ID, id)));
+		return userRepository.findById(id)
+				.orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_BY_ID, id)));
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) {
-		return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(AUTH_FAILED + String.format(USER_NOT_FOUND_BY_USERNAME, username)));
+		return userRepository.findByUsername(username).orElseThrow(
+				() -> new UsernameNotFoundException(AUTH_FAILED + String.format(USER_NOT_FOUND_BY_USERNAME, username)));
 	}
 
 	@Override
 	public UserEntity getLoggedInUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(auth == null) {
+		if (auth == null) {
 			throw new UserNotAuthenticatedException("No authentication found in security context.");
 		}
 		Object user = auth.getPrincipal();
-		if(!(user instanceof UserEntity)) {
+		if (!(user instanceof UserEntity)) {
 			throw new UserNotAuthenticatedException(NO_LOGGED_IN_USER_FOUND);
 		}
 		return (UserEntity) user;
@@ -174,20 +183,19 @@ public class UserServiceImpl implements UserService {
 		UserEntity loggedInUser = userRepository.getUserReference(getLoggedInUser().getId());
 		UserEntity potentialDate = userRepository.getUserReference(id);
 		Optional<FavoriteEntity> favorite = userRepository.isFavorite(loggedInUser, potentialDate);
-		if(!favorite.isPresent()) {
+		return favorite.map(fav -> {
+			fav.setCreateTime(LocalDateTime.now());
+			return new ResponseEntity<String>(HttpStatus.OK);
+		}).orElseGet(() -> {
 			userRepository.addFavorite(loggedInUser, potentialDate);
-			if(userRepository.isFavorite(potentialDate, loggedInUser).isPresent()) {
+			eventPublisher.publishEvent(new FavoriteAddedEvent(this, loggedInUser, potentialDate.getId()));
+			eventPublisher.publishEvent(new UserLikedEvent(this, potentialDate, loggedInUser.getId()));
+			return userRepository.isFavorite(potentialDate, loggedInUser).map(fav -> {
 				userRepository.createDate(loggedInUser, potentialDate);
-				return new ResponseEntity<>(HttpStatus.CREATED);
-			}
-			else {
-				return new ResponseEntity<>("Favorite added", HttpStatus.OK);
-			}
-		}
-		else {
-			favorite.get().setCreateTime(LocalDateTime.now());
-		}
-		return new ResponseEntity<>(HttpStatus.OK);
+				eventPublisher.publishEvent(new DateCreatedEvent(this, loggedInUser, potentialDate));
+				return new ResponseEntity<String>(HttpStatus.CREATED);
+			}).orElse(new ResponseEntity<String>("Favorite added", HttpStatus.OK));
+		});
 	}
 
 	@Override
@@ -195,30 +203,30 @@ public class UserServiceImpl implements UserService {
 		List<String> ids = userRepository.findFavoriteIdsForUser(userRepository.getUserReference(userId), pageable);
 		return sortWithIdOrder(ids, userRepository.findUsersByIdWithPhotos(ids));
 	}
-	
+
 	@Override
 	public List<UserEntity> findLikedByForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findLikedByIdsForUser(userRepository.getUserReference(userId), pageable);
 		return sortWithIdOrder(ids, userRepository.findUsersByIdWithPhotos(ids));
 	}
-	
+
 	@Override
 	public List<UserEntity> findDatesForUser(String userId, Pageable pageable) {
 		List<String> ids = userRepository.findDateIdsForUser(userRepository.getUserReference(userId), pageable);
 		return sortWithIdOrder(ids, userRepository.findUsersByIdWithPhotos(ids));
 	}
-	
+
 	@Override
 	public UserEntity getReference(String id) {
 		return userRepository.getUserReference(id);
 	}
-	
+
 	private UserEntity getLoggedInUserForUpdate() {
 		return (UserEntity) loadUserByUsername(getLoggedInUser().getUsername());
 	}
-	
+
 	private void checkDoesNotAlreadyExist(UserEntity user) {
-		if(userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail())) {
+		if (userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail())) {
 			throw new UserValidationException(USER_ALREADY_EXISTS);
 		}
 	}
@@ -227,14 +235,16 @@ public class UserServiceImpl implements UserService {
 		List<String> photos = user.getPhotos();
 		return photos.contains(photo);
 	}
-	
+
 	private void updateCache(UserEntity user) {
-		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(user, user.getPassword(),
+				user.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(newAuth);
 	}
-	
+
 	private List<UserEntity> sortWithIdOrder(List<String> ids, List<UserEntity> users) {
-		Collections.sort(users, (left, right) -> Integer.compare(ids.indexOf(left.getId()), ids.indexOf(right.getId())));
+		Collections.sort(users,
+				(left, right) -> Integer.compare(ids.indexOf(left.getId()), ids.indexOf(right.getId())));
 		return users;
 	}
 }

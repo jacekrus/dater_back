@@ -1,24 +1,24 @@
 package com.dater.event;
 
-import java.util.Objects;
-
-import org.springframework.context.ApplicationEvent;
-
 import com.dater.model.ConversationMessageEntity;
 
-public class MessageSendEvent extends ApplicationEvent {
+public class MessageSendEvent extends AbstractApplicationEvent {
 	
 	private static final long serialVersionUID = -4484258678520751959L;
 	private final ConversationMessageEntity message;
 
 	public MessageSendEvent(Object source, ConversationMessageEntity message) {
-		super(source);
-		Objects.requireNonNull(message, "message cannot be null");
+		super(source, EventType.MESSAGE);
 		this.message = message;
 	}
 
 	public ConversationMessageEntity getMessage() {
 		return message;
+	}
+
+	@Override
+	public <V> V apply(ApplicationEventVisitor<V> visitor) {
+		return visitor.visit(this);
 	}
 
 }

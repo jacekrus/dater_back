@@ -25,7 +25,7 @@ public class UserRepositoryImpl extends AbstractRepository implements CustomUser
 	public List<UserEntity> findRecommended(Gender userGender, Optional<Gender> preferredGender) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("SELECT u from UserEntity u");
-		queryBuilder.append(" where u.preference = :userGender");
+		queryBuilder.append(" where (u.preference = :userGender or u.preference is null)");
 		preferredGender.ifPresent(gen -> queryBuilder.append(" and u.gender = :preference"));
 		queryBuilder.append(" order by random()");
 		TypedQuery<UserEntity> query = em.createQuery(queryBuilder.toString(), UserEntity.class);
