@@ -57,42 +57,5 @@ public class FavoriteEntity extends BaseEntity {
 	public void setCreateTime(LocalDateTime createTime) {
 		this.createTime = createTime;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
-		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-		result = prime * result + ((ownersFavorite == null) ? 0 : ownersFavorite.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		FavoriteEntity other = (FavoriteEntity) obj;
-		if (createTime == null) {
-			if (other.createTime != null)
-				return false;
-		} else if (!createTime.equals(other.createTime))
-			return false;
-		if (owner == null) {
-			if (other.owner != null)
-				return false;
-		} else if (!owner.equals(other.owner))
-			return false;
-		if (ownersFavorite == null) {
-			if (other.ownersFavorite != null)
-				return false;
-		} else if (!ownersFavorite.equals(other.ownersFavorite))
-			return false;
-		return true;
-	}
 	
 }

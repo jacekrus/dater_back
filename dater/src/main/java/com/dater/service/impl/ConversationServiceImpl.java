@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -96,7 +95,7 @@ public class ConversationServiceImpl implements ConversationService {
 		LocalDateTime currentTime = LocalDateTime.now();
 		conversation.ifPresent(conv -> conv.setLatestMessageTime(currentTime));
 		if(createIfNotExists && conversation.isEmpty()) {
-			ConversationEntity newConversation = new ConversationEntity(Set.of(users.get(0), users.get(1)), currentTime, UUID.randomUUID().toString());
+			ConversationEntity newConversation = new ConversationEntity(Set.of(users.get(0), users.get(1)), currentTime);
 			newConversation.setLatestMessageTime(currentTime);
 			conversationRepository.save(newConversation);
 			return newConversation;

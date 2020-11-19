@@ -37,7 +37,6 @@ public class ApplicationEventHandler {
 				ConversationEntity conversation = message.getConversation();
 				Set<UserEntity> users = new HashSet<>(conversation.getUsers());
 				conversation.setCreateTime(null);
-				conversation.setName(null);
 				conversation.setUsers(null);
 				conversation.setLatestMessageTime(null);
 				for(UserEntity user : users) {

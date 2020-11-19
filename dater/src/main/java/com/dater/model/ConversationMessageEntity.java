@@ -73,41 +73,4 @@ public class ConversationMessageEntity extends BaseEntity {
 		this.text = text;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((conversation == null) ? 0 : conversation.hashCode());
-		result = prime * result + ((sendTime == null) ? 0 : sendTime.hashCode());
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ConversationMessageEntity other = (ConversationMessageEntity) obj;
-		if (conversation == null) {
-			if (other.conversation != null)
-				return false;
-		} else if (!conversation.equals(other.conversation))
-			return false;
-		if (sendTime == null) {
-			if (other.sendTime != null)
-				return false;
-		} else if (!sendTime.equals(other.sendTime))
-			return false;
-		if (text == null) {
-			if (other.text != null)
-				return false;
-		} else if (!text.equals(other.text))
-			return false;
-		return true;
-	}
-	
 }

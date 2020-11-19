@@ -1,20 +1,17 @@
 package com.dater.model;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import org.hibernate.annotations.GenericGenerator;
 
 @MappedSuperclass
 public abstract class BaseEntity {
 
 	@Id
 	@Column(nullable = false, unique = true)
-	@GeneratedValue(generator="system-uuid")
-	@GenericGenerator(name="system-uuid", strategy = "uuid")
-	protected String id;
+	protected String id = UUID.randomUUID().toString().replace("-", "");
 
 	public BaseEntity() {}
 
@@ -28,7 +25,10 @@ public abstract class BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return 31;
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
 	}
 
 	@Override

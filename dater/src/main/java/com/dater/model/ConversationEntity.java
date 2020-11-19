@@ -29,9 +29,6 @@ public class ConversationEntity extends BaseEntity {
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createTime;
 
-	@Column(nullable = false, updatable = false)
-	private String name;
-	
 	private LocalDateTime latestMessageTime;
 	
 	@Transient
@@ -40,10 +37,9 @@ public class ConversationEntity extends BaseEntity {
 	
 	public ConversationEntity() {}
 
-	public ConversationEntity(Set<UserEntity> users, LocalDateTime createTime, String name) {
+	public ConversationEntity(Set<UserEntity> users, LocalDateTime createTime) {
 		this.users = users;
 		this.createTime = createTime;
-		this.name = name;
 	}
 
 	public Set<UserEntity> getUsers() {
@@ -62,14 +58,6 @@ public class ConversationEntity extends BaseEntity {
 		this.createTime = createTime;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	public void addUser(UserEntity user) {
 		users.add(user);
 	}
@@ -92,37 +80,6 @@ public class ConversationEntity extends BaseEntity {
 
 	public void setHasUnreadMessages(boolean hasUnreadMessages) {
 		this.hasUnreadMessages = hasUnreadMessages;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ConversationEntity other = (ConversationEntity) obj;
-		if (createTime == null) {
-			if (other.createTime != null)
-				return false;
-		} else if (!createTime.equals(other.createTime))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
 	}
 	
 }
