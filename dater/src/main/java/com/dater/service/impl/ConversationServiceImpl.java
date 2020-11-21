@@ -10,7 +10,6 @@ import javax.transaction.Transactional;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dater.event.MessageSendEvent;
@@ -56,11 +55,14 @@ public class ConversationServiceImpl implements ConversationService {
 
 	@Override
 	public ConversationEntity findById(String conversationId) {
-		return conversationRepository.findById(conversationId).orElseThrow(() -> new ConversationNotFoundException("conversation with id: [" +  conversationId +"] not found."));
+		ConversationEntity conversation = conversationRepository.findByIdWithUsers(conversationId).orElseThrow(
+				() -> new ConversationNotFoundException("conversation with id: [" +  conversationId +"] not found."));
+		conversation.getUsers().forEach(usr -> Hibernate.initialize(usr.getPhotos()));
+		return conversation;
 	}
 
 	@Override
-	public List<ConversationEntity> findConversationsForUser(UserEntity user, Pageable pageable) {
+	public List<ConversationEntity> findConversationsForUser(UserEntity user, SkippingPageable pageable) {
 		List<ConversationEntity> conversations = conversationRepository.findConversationsForUser(user, pageable);
 		conversations.stream().forEach(c -> c.getUsers().forEach(u -> Hibernate.initialize(u.getPhotos())));
 		return conversations;

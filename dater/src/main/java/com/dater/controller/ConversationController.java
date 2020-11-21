@@ -34,8 +34,13 @@ public class ConversationController {
 	}
 	
 	@GetMapping
-	public List<ConversationEntity> findConversationsForUser(Pageable pageable) {
-		return convSvc.findConversationsForUser(userSvc.getLoggedInUser(), pageable);
+	public List<ConversationEntity> findConversationsForUser(@RequestParam(name = "skip", required = false, defaultValue = "0") int skip, Pageable pageable) {
+		return convSvc.findConversationsForUser(userSvc.getLoggedInUser(), new PageWithSkipRequest(pageable, skip));
+	}
+	
+	@GetMapping(value = "/conversation")
+	public ConversationEntity findConversationById(@RequestParam(name = "id") String conversationId) {
+		return convSvc.findById(conversationId);
 	}
 	
 	@PostMapping
