@@ -14,5 +14,8 @@ public interface ConversationRepository extends JpaRepository<ConversationEntity
 	
 	@Query("from ConversationEntity c left join fetch c.users where c.id=:id")
 	Optional<ConversationEntity> findByIdWithUsers(@Param("id") String conversationId);
+	
+	@Query("from ConversationEntity c left join fetch c.userLastAccessedTime where c.id=:id")
+	Optional<ConversationEntity> findByIdWithAccessTimes(@Param("id") String conversationId);
 
 }

@@ -40,7 +40,7 @@ public class ConversationController {
 	
 	@GetMapping(value = "/conversation")
 	public ConversationEntity findConversationById(@RequestParam(name = "id") String conversationId) {
-		return convSvc.findById(conversationId);
+		return convSvc.findByIdWithUsers(conversationId);
 	}
 	
 	@PostMapping
@@ -49,10 +49,15 @@ public class ConversationController {
 		return convSvc.findConversationByUsers(users, create);
 	}
 	
+	@PostMapping(value = "/access")
+	public void updateConversationAccessTime(@RequestParam(name = "id") String conversationId) {
+		convSvc.updateConversationAccessTime(userSvc.getLoggedInUser(), conversationId);
+	}
+	
 	@GetMapping(value = "/messages")
 	public List<ConversationMessageEntity> findMessagesForConversation(@RequestParam(name = "id") String conversationId, 
 			@RequestParam(name = "skip", required = false, defaultValue = "0") int skip, Pageable pageable) {
-		return convSvc.findMessagesForConversation(conversationId, new PageWithSkipRequest(pageable, skip));
+		return convSvc.findMessagesForConversation(conversationId, userSvc.getLoggedInUser(), new PageWithSkipRequest(pageable, skip));
 	}
 	
 	@PostMapping(value = "/messages")

@@ -13,9 +13,15 @@ public interface ConversationService {
 	
 	void addUserToConversation(UserEntity user, String conversationId);
 	
+	void updateConversationAccessTime(UserEntity user, String conversationId);
+	
 	ConversationMessageEntity addMessageToConversation(UserEntity sender, String text, String conversationId);
 	
-	ConversationEntity findById(String conversationId);
+	ConversationEntity findByIdWithUsers(String conversationId);
+	
+	ConversationEntity findByIdWithAccessTimes(String conversationId);
+	
+	ConversationEntity findByIdWithUserPhotos(String conversationId);
 	
 	ConversationEntity getReference(String conversationId);
 	
@@ -23,6 +29,6 @@ public interface ConversationService {
 	
 	List<ConversationEntity> findConversationsForUser(UserEntity user, SkippingPageable pageable);
 	
-	List<ConversationMessageEntity> findMessagesForConversation(String conversationId, SkippingPageable pageable);
+	List<ConversationMessageEntity> findMessagesForConversation(String conversationId, UserEntity loggedInUser, SkippingPageable pageable);
 
 }
