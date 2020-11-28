@@ -1,20 +1,18 @@
 package com.dater.event;
 
-import com.dater.model.UserEntity;
-
 public class UserLikedEvent extends AbstractUserEvent {
 
 	private static final long serialVersionUID = 912958449822620681L;
 	
-	private final String likedById;
+	private final String likedByUsername;
 
-	public UserLikedEvent(Object source, UserEntity user, String likedById) {
-		super(source, EventType.LIKED, user);
-		this.likedById = likedById;
+	public UserLikedEvent(Object source, String userId, String likedByUsername) {
+		super(source, EventType.LIKED, userId);
+		this.likedByUsername = likedByUsername;
 	}
 
-	public String getLikedById() {
-		return likedById;
+	public String getLikedByUsername() {
+		return likedByUsername;
 	}
 
 	@Override

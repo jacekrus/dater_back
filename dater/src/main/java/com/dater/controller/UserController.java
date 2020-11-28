@@ -132,50 +132,6 @@ public class UserController {
 //		userService.addUser(user2);
 //		svc.addConversation(conversation);
 		
-		
-//		LocalDateTime currentDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.now());
-//		UserEntity user = userService.findUserById("4028808c753b9a2501753b9a316b0000");
-//		UserEntity user2 = userService.findUserById("4028808c753b9a2501753b9a31e00001");
-//		ConversationEntity conversation = svc.findById("4028808c753b9a2501753b9a31e80002");
-//		svc.addMessage(new ChatMessageEntity(user, conversation, currentDateTime, "Hello from user chater"));
-//		svc.addMessage(new ChatMessageEntity(user2, conversation, currentDateTime.plusSeconds(2), "Hello from user chater2"));
-		
-		
-//		svc.addUserToConversation(userService.findUserById("MIE5kFdERB5wtFEMlEtQQD"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("oJ8o5081Q1IMZ4MBN95x8D"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("FZpoxscBQsoFRwctxcYVBC"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("JZc1UMAxRVJ0hdM4kp9FFD"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("lttBspM0Q00BRBMwhAgsID"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("ZsEU1o4gQAwoQ9BpxZUlhA"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("wp4gpMsZQgl9YsQ00cx5MA"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("R0BosVFMRstYZ4Zt5kthtB"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("kgJhk9cURsEggwQEJ9UtMA"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("VEI45NAMRB0NRMRoZZtQpD"), "4028808c753b9a2501753b9a31e80002");
-//		svc.addUserToConversation(userService.findUserById("cVlEFNYEQkxwxw50tc9F9C"), "4028808c753b9a2501753b9a31e80002");
-		
-		
-		
-//		UserEntity main = userService.findUserById("4028808c753b9a2501753b9a31e00001");
-//		UserEntity first = userService.findUserById("ZsEU1o4gQAwoQ9BpxZUlhA");
-//		UserEntity second = userService.findUserById("oJ8o5081Q1IMZ4MBN95x8D");
-//		UserEntity third = userService.findUserById("FZpoxscBQsoFRwctxcYVBC");
-//		UserEntity fourth = userService.findUserById("JZc1UMAxRVJ0hdM4kp9FFD");
-//		UserEntity fivth = userService.findUserById("lttBspM0Q00BRBMwhAgsID");
-//		UserEntity sixth = userService.findUserById("wp4gpMsZQgl9YsQ00cx5MA");
-//		UserEntity seventh = userService.findUserById("kgJhk9cURsEggwQEJ9UtMA");
-//		UserEntity eighth = userService.findUserById("VEI45NAMRB0NRMRoZZtQpD");
-//		UserEntity nineth = userService.findUserById("cVlEFNYEQkxwxw50tc9F9C");
-//		LocalDateTime currentDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.now());
-//		svc.addConversation(new ConversationEntity(Set.of(first, second), currentDateTime, UUID.randomUUID().toString()));
-//		svc.addConversation(new ConversationEntity(Set.of(main, second), currentDateTime.plusSeconds(1), UUID.randomUUID().toString()));
-//		svc.addConversation(new ConversationEntity(Set.of(main, third), currentDateTime.plusSeconds(2), UUID.randomUUID().toString()));
-//		svc.addConversation(new ConversationEntity(Set.of(main, fourth), currentDateTime.plusSeconds(3), UUID.randomUUID().toString()));
-//		svc.addConversation(new ConversationEntity(Set.of(main, fivth), currentDateTime.plusSeconds(4), UUID.randomUUID().toString()));
-//		svc.addConversation(new ConversationEntity(Set.of(main, sixth), currentDateTime.plusSeconds(5), UUID.randomUUID().toString()));
-//		svc.addConversation(new ConversationEntity(Set.of(main, seventh), currentDateTime.plusSeconds(6), UUID.randomUUID().toString()));
-//		svc.addConversation(new ConversationEntity(Set.of(main, eighth), currentDateTime.plusSeconds(7), UUID.randomUUID().toString()));
-//		svc.addConversation(new ConversationEntity(Set.of(main, nineth), currentDateTime.plusSeconds(8), UUID.randomUUID().toString()));
-		
 	}
 	
 }

@@ -1,19 +1,17 @@
 package com.dater.event;
 
-import com.dater.model.UserEntity;
-
 public class DateCreatedEvent extends AbstractUserEvent {
 	
 	private static final long serialVersionUID = -8674223266097756404L;
-	private final UserEntity date;
+	private final String dateUsername;
 
-	public DateCreatedEvent(Object source, UserEntity user, UserEntity date) {
-		super(source, EventType.DATE, user);
-		this.date = date;
+	public DateCreatedEvent(Object source, String userId, String dateUsername) {
+		super(source, EventType.DATE, userId);
+		this.dateUsername = dateUsername;
 	}
 
-	public UserEntity getDate() {
-		return date;
+	public String getDateUsername() {
+		return dateUsername;
 	}
 
 	@Override

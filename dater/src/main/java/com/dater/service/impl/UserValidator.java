@@ -30,13 +30,13 @@ public class UserValidator {
 		if(user == null) {
 			throw new UserValidationException(USER_DATA_EMPTY);
 		}
-		validateUsername(user);
-		validateEmail(user);
-		validatePassword(user);
-		validateDateOfBirth(user);
-		validateLocation(user);
-		validateGender(user);
-		validateDescription(user);
+		validateUsername(user.getUsername());
+		validateEmail(user.getEmail());
+		validatePassword(user.getPassword());
+		validateDateOfBirth(user.getDateOfBirth());
+		validateLocation(user.getLocation());
+		validateGender(user.getGender());
+		validateDescription(user.getDescription());
 	}
 	
 	public void validateWithPhotos(UserEntity user) {
@@ -44,8 +44,7 @@ public class UserValidator {
 		validatePhotos(user);
 	}
 	
-	public void validateLocation(UserEntity user) {
-		String location = user.getLocation();
+	public void validateLocation(String location) {
 		if(isNullOrBlank(location)) {
 			throw new UserValidationException(LOCATION_EMPTY);
 		}
@@ -55,35 +54,7 @@ public class UserValidator {
 		}
 	}
 	
-	private void validateUsername(UserEntity user) {
-		String username = user.getUsername();
-		if(isNullOrBlank(username)) {
-			throw new UserValidationException(USERNAME_EMPTY);
-		}
-		if(username.length() < 5) {
-			throw new UserValidationException(USERNAME_TOO_SHORT);
-		}
-		if(username.length() > 18) {
-			throw new UserValidationException(USERNAME_TOO_LONG);
-		}
-		if(hasInvalidCharacters(username)) {
-			throw new UserValidationException(USERNAME_INVALID_CHARS);
-		}
-	}
-	
-	private void validateEmail(UserEntity user) {
-		String email = user.getEmail();
-		if(isNullOrBlank(email)) {
-			throw new UserValidationException(EMAIL_EMPTY);
-		}
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-        if(!matcher.find()) {
-        	throw new UserValidationException(EMAIL_INVALID);
-        }
-	}
-	
-	private void validatePassword(UserEntity user) {
-		String password = user.getPassword();
+	public void validatePassword(String password) {
 		if(isNullOrBlank(password)) {
 			throw new UserValidationException(PASSWORD_EMPTY);
 		}
@@ -98,8 +69,32 @@ public class UserValidator {
 		}
 	}
 	
-	private void validateDateOfBirth(UserEntity user) {
-		LocalDate date = user.getDateOfBirth();
+	private void validateUsername(String username) {
+		if(isNullOrBlank(username)) {
+			throw new UserValidationException(USERNAME_EMPTY);
+		}
+		if(username.length() < 5) {
+			throw new UserValidationException(USERNAME_TOO_SHORT);
+		}
+		if(username.length() > 18) {
+			throw new UserValidationException(USERNAME_TOO_LONG);
+		}
+		if(hasInvalidCharacters(username)) {
+			throw new UserValidationException(USERNAME_INVALID_CHARS);
+		}
+	}
+	
+	private void validateEmail(String email) {
+		if(isNullOrBlank(email)) {
+			throw new UserValidationException(EMAIL_EMPTY);
+		}
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        if(!matcher.find()) {
+        	throw new UserValidationException(EMAIL_INVALID);
+        }
+	}
+	
+	private void validateDateOfBirth(LocalDate date) {
 		if(date == null) {
 			throw new UserValidationException(DATE_EMPTY);
 		}
@@ -111,15 +106,13 @@ public class UserValidator {
 		}
 	}
 	
-	private void validateGender(UserEntity user) {
-		Gender gender = user.getGender();
+	private void validateGender(Gender gender) {
 		if(gender == null) {
 			throw new UserValidationException(GENDER_EMPTY);
 		}
 	}
 	
-	private void validateDescription(UserEntity user) {
-		String description = user.getDescription();
+	private void validateDescription(String description) {
 		if(description != null && description.length() > 500) {
 			throw new UserValidationException(DESCRIPTION_TOO_LONG);
 		}

@@ -8,6 +8,8 @@ public final class UserMessages {
 	
 	public static final String USER_NOT_FOUND_BY_USERNAME = "User with username [%s] has not been found. ";
 	
+	public static final String USER_NOT_FOUND_BY_EMAIL = "User with email [%s] has not been found. ";
+	
 	public static final String ERROR_ADDING_PHOTOS = "Unexpected error occured while adding photos. ";
 	
 	public static final String ERROR_SETTING_PROFILE_PHOTO = "Error occured while setting profile photo. ";
@@ -54,7 +56,7 @@ public final class UserMessages {
 	
 	public static final String DATE_TOO_OLD = "Date of birth cannot be from more than 100 years ago.";
 	
-	public static final String DATE_TOO_YOUNG = "You have to at least 18 to create an account.";
+	public static final String DATE_TOO_YOUNG = "You have to be at least 18 to create an account.";
 	
 	public static final String LOCATION_EMPTY = "Location cannot be empty.";
 	

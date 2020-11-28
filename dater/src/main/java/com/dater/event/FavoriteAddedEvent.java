@@ -1,20 +1,18 @@
 package com.dater.event;
 
-import com.dater.model.UserEntity;
-
 public class FavoriteAddedEvent extends AbstractUserEvent {
 
 	private static final long serialVersionUID = -6384590869038300098L;
 	
-	private final String favoriteId;
+	private final String favoriteUsername;
 
-	public FavoriteAddedEvent(Object source, UserEntity user, String favoriteId) {
-		super(source, EventType.FAVORITE, user);
-		this.favoriteId = favoriteId;
+	public FavoriteAddedEvent(Object source, String username, String favoriteUsername) {
+		super(source, EventType.FAVORITE, username);
+		this.favoriteUsername = favoriteUsername;
 	}
 
-	public String getFavoriteId() {
-		return favoriteId;
+	public String getFavoriteUsername() {
+		return favoriteUsername;
 	}
 
 	@Override

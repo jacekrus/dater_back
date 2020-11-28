@@ -5,11 +5,11 @@ import static com.dater.service.impl.UserMessages.ERROR_ADDING_PHOTOS;
 import static com.dater.service.impl.UserMessages.ERROR_REMOVING_PHOTO;
 import static com.dater.service.impl.UserMessages.ERROR_SETTING_PROFILE_PHOTO;
 import static com.dater.service.impl.UserMessages.MAX_PHOTOS_EXECEEDED;
-import static com.dater.service.impl.UserMessages.NO_LOGGED_IN_USER_FOUND;
 import static com.dater.service.impl.UserMessages.PHOTO_NOT_FOUND;
 import static com.dater.service.impl.UserMessages.PHOTO_REQUIRED;
 import static com.dater.service.impl.UserMessages.TRY_AGAIN_OR_CONTACT;
 import static com.dater.service.impl.UserMessages.USER_ALREADY_EXISTS;
+import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_EMAIL;
 import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_ID;
 import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_USERNAME;
 
@@ -39,7 +39,6 @@ import org.springframework.stereotype.Service;
 import com.dater.event.DateCreatedEvent;
 import com.dater.event.FavoriteAddedEvent;
 import com.dater.event.UserLikedEvent;
-import com.dater.exception.UserNotAuthenticatedException;
 import com.dater.exception.UserNotFoundException;
 import com.dater.exception.UserValidationException;
 import com.dater.model.FavoriteEntity;
@@ -88,7 +87,7 @@ public class UserServiceImpl implements UserService {
 			loggedInUser.setPreference(user.getPreference());
 		}
 		if (user.getLocation() != null) {
-			UserValidator.getInstance().validateLocation(user);
+			UserValidator.getInstance().validateLocation(user.getLocation());
 			loggedInUser.setLocation(user.getLocation());
 		}
 		if (user.getPhotos() != null) {
@@ -103,6 +102,14 @@ public class UserServiceImpl implements UserService {
 		UserEntity updatedUser = userRepository.save(loggedInUser);
 		updateCache(updatedUser);
 		return updatedUser;
+	}
+	
+	@Override
+	@Transactional
+	public void updateUserPassword(String email, String newPassword) {
+		UserValidator.getInstance().validatePassword(newPassword);
+		UserEntity user = findUserByEmail(email);
+		user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
 	}
 
 	@Override
@@ -157,6 +164,20 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findById(id)
 				.orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_BY_ID, id)));
 	}
+	
+	@Override
+	public UserEntity findUserByIdWithPhotos(String id) {
+		return userRepository.findByIdWithPhotos(id)
+				.orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_BY_ID, id)));
+	}
+
+
+	
+	@Override
+	public UserEntity findUserByEmail(String email) {
+		return userRepository.findByEmail(email)
+				.orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_BY_EMAIL, email)));
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) {
@@ -167,32 +188,28 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserEntity getLoggedInUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth == null) {
-			throw new UserNotAuthenticatedException("No authentication found in security context.");
+		if (auth == null || !(auth.getPrincipal() instanceof UserEntity)) {
+			return null;
 		}
-		Object user = auth.getPrincipal();
-		if (!(user instanceof UserEntity)) {
-			throw new UserNotAuthenticatedException(NO_LOGGED_IN_USER_FOUND);
-		}
-		return (UserEntity) user;
+		return (UserEntity) auth.getPrincipal();
 	}
 
 	@Override
 	@Transactional
-	public ResponseEntity<String> addFavoriteUser(String id) {
-		UserEntity loggedInUser = userRepository.getUserReference(getLoggedInUser().getId());
-		UserEntity potentialDate = userRepository.getUserReference(id);
+	public ResponseEntity<String> addFavoriteUser(String favoriteId) {
+		UserEntity loggedInUser = getLoggedInUser();
+		UserEntity potentialDate = findUserById(favoriteId);
 		Optional<FavoriteEntity> favorite = userRepository.isFavorite(loggedInUser, potentialDate);
 		return favorite.map(fav -> {
 			fav.setCreateTime(LocalDateTime.now());
 			return new ResponseEntity<String>(HttpStatus.OK);
 		}).orElseGet(() -> {
 			userRepository.addFavorite(loggedInUser, potentialDate);
-			eventPublisher.publishEvent(new FavoriteAddedEvent(this, loggedInUser, potentialDate.getId()));
-			eventPublisher.publishEvent(new UserLikedEvent(this, potentialDate, loggedInUser.getId()));
+			eventPublisher.publishEvent(new FavoriteAddedEvent(this, loggedInUser.getUsername(), potentialDate.getUsername()));
+			eventPublisher.publishEvent(new UserLikedEvent(this, potentialDate.getUsername(), loggedInUser.getUsername()));
 			return userRepository.isFavorite(potentialDate, loggedInUser).map(fav -> {
 				userRepository.createDate(loggedInUser, potentialDate);
-				eventPublisher.publishEvent(new DateCreatedEvent(this, loggedInUser, potentialDate));
+				eventPublisher.publishEvent(new DateCreatedEvent(this, loggedInUser.getUsername(), potentialDate.getUsername()));
 				return new ResponseEntity<String>(HttpStatus.CREATED);
 			}).orElse(new ResponseEntity<String>("Favorite added", HttpStatus.OK));
 		});
@@ -247,4 +264,5 @@ public class UserServiceImpl implements UserService {
 				(left, right) -> Integer.compare(ids.indexOf(left.getId()), ids.indexOf(right.getId())));
 		return users;
 	}
+
 }

@@ -17,6 +17,8 @@ public interface UserService extends UserDetailsService {
 	
 	void removeUser(String id);
 	
+	void updateUserPassword(String email, String newPassword);
+	
 	UserEntity updateUser(UserEntity user);
 	
 	UserEntity setProfilePhoto(String photo);
@@ -25,11 +27,15 @@ public interface UserService extends UserDetailsService {
 	
 	UserEntity findUserById(String id);
 	
+	UserEntity findUserByIdWithPhotos(String id);
+	
+	UserEntity findUserByEmail(String email);
+	
 	UserEntity getLoggedInUser();
 	
 	UserEntity getReference(String id);
 	
-	ResponseEntity<String> addFavoriteUser(String id);
+	ResponseEntity<String> addFavoriteUser(String favoriteId);
 	
 	List<UserEntity> findRecommendedForUser(String userId);
 	

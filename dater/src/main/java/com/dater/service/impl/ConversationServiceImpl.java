@@ -114,7 +114,6 @@ public class ConversationServiceImpl implements ConversationService {
 		}
 		Optional<ConversationEntity> conversation = conversationRepository.findConversationByUsers(users);
 		LocalDateTime currentTime = LocalDateTime.now();
-		conversation.ifPresent(conv -> conv.setLatestMessageTime(currentTime));
 		if(createIfNotExists && conversation.isEmpty()) {
 			Map<String, LocalDateTime> userAccTime = Map.of(users.get(0).getId(), currentTime, users.get(1).getId(), currentTime);
 			ConversationEntity newConversation = new ConversationEntity(Set.of(users.get(0), users.get(1)), currentTime, userAccTime);

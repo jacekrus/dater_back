@@ -29,6 +29,8 @@ public abstract class AbstractApplicationEvent extends ApplicationEvent {
 		
 		V visit(UserLikedEvent e);
 		
+		V visit(PasswordResetRequestedEvent e);
+		
 	}
 
 }

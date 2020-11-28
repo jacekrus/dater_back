@@ -39,6 +39,8 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 			.antMatchers(HttpMethod.POST, "/users/add").permitAll()
 			.antMatchers(HttpMethod.POST, "/users/validate").permitAll()
+			.antMatchers(HttpMethod.POST, "/passwords", "/passwords/reset").permitAll()
+			.antMatchers(HttpMethod.GET, "/passwords").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.addFilterBefore(new CorsFilterConfig(), ChannelProcessingFilter.class)
