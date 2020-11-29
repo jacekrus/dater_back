@@ -71,11 +71,12 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
 	@Override
 	@Transactional
-	public void resetUserPassword(String email, String newPassword) {
+	public UserEntity resetUserPassword(String email, String newPassword) {
 		PasswordResetEntity passReset = passResetRepo.findByEmail(email)
 				.orElseThrow(() -> new PasswordResetNotFoundException("Password reset request for email: " + email + " has not been found. It might have timed out, please request password reset again."));
-		userSvc.updateUserPassword(email, newPassword);
+		UserEntity user = userSvc.updateUserPassword(email, newPassword);
 		passResetRepo.deleteRequestById(passReset.getId());
+		return user;
 	}
 
 }

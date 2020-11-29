@@ -106,10 +106,11 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public void updateUserPassword(String email, String newPassword) {
+	public UserEntity updateUserPassword(String email, String newPassword) {
 		UserValidator.getInstance().validatePassword(newPassword);
 		UserEntity user = findUserByEmail(email);
 		user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+		return user;
 	}
 
 	@Override

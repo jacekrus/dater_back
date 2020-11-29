@@ -35,8 +35,8 @@ public class PasswordResetController {
 	}
 	
 	@PostMapping(value = "/reset")
-	public void resetUserPassword(@RequestBody UserEntity user) {
-		passResetSvc.resetUserPassword(user.getEmail(), user.getPassword());
+	public UserEntity resetUserPassword(@RequestBody UserEntity user) {
+		return passResetSvc.resetUserPassword(user.getEmail(), user.getPassword());
 	}
 
 }
