@@ -39,7 +39,7 @@ public class UserController {
 		return userService.findRecommendedForUser(getLoggedInUser().getId());
 	}
 	
-	@GetMapping(value = "/me", produces = JSON)
+	@GetMapping(value = "/self", produces = JSON)
 	public UserEntity getLoggedInUser() {
 		return userService.getLoggedInUser();
 	}

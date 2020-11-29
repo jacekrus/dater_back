@@ -98,7 +98,7 @@ public class ApplicationEventHandler {
 		emailMessage.setFrom("dater.noreply@gmail.com");
 		emailMessage.setSubject("Dater password reset");
 		emailMessage.setText("Hi, you have requested a password reset on Dater. Click on the link below to set up a new password.\n\n"
-					  	+ "http://localhost:3000/password/" + requestId + "\n\n"
+					  	+ "http://localhost:3000/restore/" + requestId + "\n\n"
 						+ "This links is valid only for about 30 minutes. If you have not requested password reset please ignore this message.\n\n"
 						+ "Happy dates,\nDater team");
 		return emailMessage;
