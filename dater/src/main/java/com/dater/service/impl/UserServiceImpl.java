@@ -85,14 +85,11 @@ public class UserServiceImpl implements UserService {
 		if (user.getDescription() != null) {
 			loggedInUser.setDescription(user.getDescription());
 		}
-		if (user.getPreference() != loggedInUser.getPreference()) {
-			loggedInUser.setPreference(user.getPreference());
-		}
-		if (user.getLocation() != null) {
+		else if (user.getLocation() != null) {
 			UserValidator.getInstance().validateLocation(user.getLocation());
 			loggedInUser.setLocation(user.getLocation());
 		}
-		if (user.getPhotos() != null) {
+		else if (user.getPhotos() != null) {
 			List<String> photos = loggedInUser.getPhotos();
 			if (user.getPhotos().size() + photos.size() > 4) {
 				throw new UserValidationException(MAX_PHOTOS_EXECEEDED);
@@ -100,6 +97,9 @@ public class UserServiceImpl implements UserService {
 			if (!loggedInUser.addPhotos(user.getPhotos())) {
 				throw new UserValidationException(ERROR_ADDING_PHOTOS + TRY_AGAIN_OR_CONTACT);
 			}
+		}
+		else if (user.getPreference() != loggedInUser.getPreference()) {
+			loggedInUser.setPreference(user.getPreference());
 		}
 		UserEntity updatedUser = userRepository.save(loggedInUser);
 		updateCache(updatedUser);
