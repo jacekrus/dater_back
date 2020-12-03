@@ -1,5 +1,7 @@
 package com.dater.service.impl;
 
+import static com.dater.message.ConversationMessages.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +24,6 @@ import com.dater.model.UserEntity;
 import com.dater.repository.ConversationRepository;
 import com.dater.repository.SkippingPageable;
 import com.dater.service.ConversationService;
-
-import static com.dater.service.impl.ConversationMessages.*;
 
 @Service
 public class ConversationServiceImpl implements ConversationService {

@@ -1,5 +1,7 @@
 package com.dater.service.impl;
 
+import static com.dater.message.UserMessages.*;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -8,8 +10,6 @@ import java.util.regex.Pattern;
 import com.dater.exception.UserValidationException;
 import com.dater.model.Gender;
 import com.dater.model.UserEntity;
-
-import static com.dater.service.impl.UserMessages.*;
 
 public class UserValidator {
 	

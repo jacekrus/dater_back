@@ -1,17 +1,17 @@
 package com.dater.service.impl;
 
-import static com.dater.service.impl.UserMessages.AUTH_FAILED;
-import static com.dater.service.impl.UserMessages.ERROR_ADDING_PHOTOS;
-import static com.dater.service.impl.UserMessages.ERROR_REMOVING_PHOTO;
-import static com.dater.service.impl.UserMessages.ERROR_SETTING_PROFILE_PHOTO;
-import static com.dater.service.impl.UserMessages.MAX_PHOTOS_EXECEEDED;
-import static com.dater.service.impl.UserMessages.PHOTO_NOT_FOUND;
-import static com.dater.service.impl.UserMessages.PHOTO_REQUIRED;
-import static com.dater.service.impl.UserMessages.TRY_AGAIN_OR_CONTACT;
-import static com.dater.service.impl.UserMessages.USER_ALREADY_EXISTS;
-import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_EMAIL;
-import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_ID;
-import static com.dater.service.impl.UserMessages.USER_NOT_FOUND_BY_USERNAME;
+import static com.dater.message.UserMessages.AUTH_FAILED;
+import static com.dater.message.UserMessages.ERROR_ADDING_PHOTOS;
+import static com.dater.message.UserMessages.ERROR_REMOVING_PHOTO;
+import static com.dater.message.UserMessages.ERROR_SETTING_PROFILE_PHOTO;
+import static com.dater.message.UserMessages.MAX_PHOTOS_EXECEEDED;
+import static com.dater.message.UserMessages.PHOTO_NOT_FOUND;
+import static com.dater.message.UserMessages.PHOTO_REQUIRED;
+import static com.dater.message.UserMessages.TRY_AGAIN_OR_CONTACT;
+import static com.dater.message.UserMessages.USER_ALREADY_EXISTS;
+import static com.dater.message.UserMessages.USER_NOT_FOUND_BY_EMAIL;
+import static com.dater.message.UserMessages.USER_NOT_FOUND_BY_ID;
+import static com.dater.message.UserMessages.USER_NOT_FOUND_BY_USERNAME;
 
 import java.time.LocalDateTime;
 import java.util.Collections;

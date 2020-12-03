@@ -1,4 +1,4 @@
-package com.dater.service.impl;
+package com.dater.message;
 
 public final class ConversationMessages {
 	

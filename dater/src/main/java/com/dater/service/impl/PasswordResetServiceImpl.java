@@ -18,6 +18,8 @@ import com.dater.repository.PasswordResetRepository;
 import com.dater.service.PasswordResetService;
 import com.dater.service.UserService;
 
+import static com.dater.message.PasswordResetMessages.*;
+
 @Service
 public class PasswordResetServiceImpl implements PasswordResetService {
 	
@@ -25,10 +27,6 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 	private final PasswordResetRepository passResetRepo;
 	private final ApplicationEventPublisher eventPublisher;
 	
-	private static final String ALREADY_REQUESTED = "You have already requested password reset. Please check your e-mail and spam folder for a message from Dater.";
-	private static final String RESET_LINK_RESEND = "Reset link will be send again shortly. There have been problems sending previous reset link, "
-			+ "please make sure that your e-mail address is still valid.";
-
 	@Autowired
 	public PasswordResetServiceImpl(UserService userSvc, PasswordResetRepository passResetRepo, ApplicationEventPublisher eventPublisher) {
 		this.passResetRepo = passResetRepo;
@@ -40,7 +38,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 	@Transactional
 	public void setEmailSuccessful(String requestId) {
 		PasswordResetEntity passReset = passResetRepo.findById(requestId)
-				.orElseThrow(() -> new PasswordResetNotFoundException("Password reset request with id: " + requestId + " has not been found."));
+				.orElseThrow(() -> new PasswordResetNotFoundException(String.format(NOT_FOUND_BY_ID, requestId)));
 		passReset.setEmailSuccessful(true);
 	}
 
@@ -66,14 +64,14 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 	@Override
 	public PasswordResetEntity getPasswordReset(String passResetId) {
 		return passResetRepo.findById(passResetId)
-				.orElseThrow(() -> new PasswordResetNotFoundException("Password reset request with id: " + passResetId + " has not been found."));
+				.orElseThrow(() -> new PasswordResetNotFoundException(String.format(NOT_FOUND_BY_ID, passResetId)));
 	}
 
 	@Override
 	@Transactional
 	public UserEntity resetUserPassword(String email, String newPassword) {
 		PasswordResetEntity passReset = passResetRepo.findByEmail(email)
-				.orElseThrow(() -> new PasswordResetNotFoundException("Password reset request for email: " + email + " has not been found. It might have timed out, please request password reset again."));
+				.orElseThrow(() -> new PasswordResetNotFoundException(String.format(NOT_FOUND_BY_EMAIL, email)));
 		UserEntity user = userSvc.updateUserPassword(email, newPassword);
 		passResetRepo.deleteRequestById(passReset.getId());
 		return user;
