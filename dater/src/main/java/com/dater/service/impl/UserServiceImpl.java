@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public void addUser(UserEntity userEntity) {
 		UserValidator.getInstance().validateWithPhotos(userEntity);
 		checkDoesNotAlreadyExist(userEntity);
@@ -78,6 +79,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public UserEntity updateUser(UserEntity user) {
 		UserEntity loggedInUser = getLoggedInUserForUpdate();
 		if (user.getDescription() != null) {
@@ -114,6 +116,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public UserEntity setProfilePhoto(String photo) {
 		UserEntity loggedInUser = getLoggedInUserForUpdate();
 		if (!validatePhotoExistsInUserGallery(loggedInUser, photo)) {
@@ -126,6 +129,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public UserEntity removePhoto(String photo) {
 		UserEntity loggedInUser = getLoggedInUserForUpdate();
 		if (!validatePhotoExistsInUserGallery(loggedInUser, photo)) {

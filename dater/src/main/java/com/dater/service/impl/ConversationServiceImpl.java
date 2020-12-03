@@ -38,6 +38,7 @@ public class ConversationServiceImpl implements ConversationService {
 	}
 
 	@Override
+	@Transactional
 	public void addConversation(ConversationEntity conversation) {
 		conversationRepository.save(conversation);
 	}
