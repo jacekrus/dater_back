@@ -16,6 +16,8 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -52,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpStatus.FORBIDDEN.value()))
 			.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
 			.and()
-			.rememberMe()
+			.rememberMe().rememberMeServices(rememberMeServices())
 			.and()
 			.logout()
 			.deleteCookies("JSESSIONID")
@@ -73,9 +75,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
 		filter.setAuthenticationSuccessHandler(new AuthSuccessHandler());
 		filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler());
+		filter.setRememberMeServices(rememberMeServices());
 		filter.setAuthenticationManager(super.authenticationManager());
 		filter.setFilterProcessesUrl(LOGIN_URL);
 		return filter;
+	}
+	
+	@Bean
+	public TokenBasedRememberMeServices rememberMeServices() {
+		CustomTokenBasedRememberMeServices rememberMeServices = new CustomTokenBasedRememberMeServices("remember-me-key", userDetailsService);
+		rememberMeServices.setCookieName("remember-me-cookie");
+		rememberMeServices.setTokenValiditySeconds(AbstractRememberMeServices.TWO_WEEKS_S);
+		rememberMeServices.setAlwaysRemember(true);
+		return rememberMeServices;
 	}
 	
 	@Bean
@@ -83,7 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "PATCH", "DELETE"));
-		configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Content-Length", "Accept", "X-Requested-With", "X-XSRF-TOKEN"));
+		configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Content-Length", "Accept", "X-Requested-With", "X-XSRF-TOKEN", "Dater-Remember-Me"));
 		configuration.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
