@@ -51,12 +51,12 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 				return new ResponseEntity<String>(ALREADY_REQUESTED, HttpStatus.OK);
 			}
 			else {
-				eventPublisher.publishEvent(new PasswordResetRequestedEvent(this, user.getEmail(), req));
+				eventPublisher.publishEvent(new PasswordResetRequestedEvent(this, user.getEmail(), req.getId()));
 				return new ResponseEntity<String>(RESET_LINK_RESEND, HttpStatus.OK);
 			}
 		}).orElseGet(() -> {
 			PasswordResetEntity passReset = passResetRepo.save(new PasswordResetEntity(email, LocalDateTime.now()));
-			eventPublisher.publishEvent(new PasswordResetRequestedEvent(this, user.getEmail(), passReset));
+			eventPublisher.publishEvent(new PasswordResetRequestedEvent(this, user.getEmail(), passReset.getId()));
 			return new ResponseEntity<String>(HttpStatus.CREATED);
 		});
 	}

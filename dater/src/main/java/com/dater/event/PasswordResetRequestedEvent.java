@@ -1,19 +1,17 @@
 package com.dater.event;
 
-import com.dater.model.PasswordResetEntity;
-
 public class PasswordResetRequestedEvent extends AbstractUserEvent {
 	
 	private static final long serialVersionUID = -8768581222048626487L;
-	private final PasswordResetEntity passReset;
+	private final String passResetId;
 	
-	public PasswordResetRequestedEvent(Object source, String email, PasswordResetEntity passReset) {
+	public PasswordResetRequestedEvent(Object source, String email, String passResetId) {
 		super(source, EventType.PASS_RESET, email);
-		this.passReset = passReset;
+		this.passResetId = passResetId;
 	}
 
-	public PasswordResetEntity getPassReset() {
-		return passReset;
+	public String getPassResetId() {
+		return passResetId;
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import com.dater.config.WebSecurityConfig;
 import com.dater.event.AbstractApplicationEvent.ApplicationEventVisitor;
 import com.dater.model.ConversationEntity;
 import com.dater.model.ConversationMessageEntity;
@@ -79,10 +80,10 @@ public class ApplicationEventHandler {
 
 			@Override
 			public Void visit(PasswordResetRequestedEvent e) {
-				SimpleMailMessage email = createEmailMessage(e.getUsernameOrEmail(), e.getPassReset().getId());
+				SimpleMailMessage email = createEmailMessage(e.getUsernameOrEmail(), e.getPassResetId());
 				try {
 					mailSender.send(email);
-					passResetSvc.setEmailSuccessful(e.getPassReset().getId());
+					passResetSvc.setEmailSuccessful(e.getPassResetId());
 				}
 				catch(Exception ex) {
 					LOGGER.error(String.format("Exception occured while sending email to user: %s", e.getUsernameOrEmail()), ex);
@@ -98,7 +99,7 @@ public class ApplicationEventHandler {
 		emailMessage.setFrom("dater.noreply@gmail.com");
 		emailMessage.setSubject("Dater password reset");
 		emailMessage.setText("Hi, you have requested a password reset on Dater. Click on the link below to set up a new password.\n\n"
-					  	+ "http://localhost:3000/reset/" + requestId + "\n\n"
+					  	+ WebSecurityConfig.ALLOWED_ORIGIN + "/reset/" + requestId + "\n\n"
 						+ "This links is valid only for about 30 minutes. If you have not requested password reset please ignore this message.\n\n"
 						+ "Happy dates,\nDater team");
 		return emailMessage;
