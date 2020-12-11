@@ -1,5 +1,7 @@
 package com.dater.controller;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dater.model.Gender;
+import com.dater.model.UserBuilder;
 import com.dater.model.UserEntity;
 import com.dater.service.UserService;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -106,32 +110,17 @@ public class UserController {
 	
 	@EventListener(ApplicationStartedEvent.class)
 	public void onStartup() {
-//		UserEntity user = new UserBuilder().withUsername("chattest")
-//						 .withEmail("chattest@gmail.com")
-//						 .withPassword("chattest")
-//						 .bornOn(LocalDate.of(1996, 11, 12))
-//						 .withLocation("Konin")
-//						 .withRole("USER")
-//						 .withGender(Gender.FEMALE)
-//						 .withDescription("First chater")
-//						 .withPhotos(Arrays.asList("https://i.redd.it/7tp05fk4rp021.jpg", "https://www.wykop.pl/cdn/c3201142/comment_xGzPTCePZe26dWY0HySM0QCZGyAyS0HC.jpg"))
-//						 .build();
-//		UserEntity user2 = new UserBuilder().withUsername("chattest2")
-//				 .withEmail("chattest2@gmail.com")
-//				 .withPassword("chattest2")
-//				 .bornOn(LocalDate.of(1996, 11, 12))
-//				 .withLocation("Konin")
-//				 .withRole("USER")
-//				 .withGender(Gender.FEMALE)
-//				 .withDescription("Second chater")
-//				 .withPhotos(Arrays.asList("https://i.redd.it/7tp05fk4rp021.jpg", "https://www.wykop.pl/cdn/c3201142/comment_xGzPTCePZe26dWY0HySM0QCZGyAyS0HC.jpg"))
-//				 .build();
-//		LocalDateTime currentDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.now());
-//		ConversationEntity conversation = new ConversationEntity(Set.of(user, user2), currentDateTime, UUID.randomUUID().toString());
-//		userService.addUser(user);
-//		userService.addUser(user2);
-//		svc.addConversation(conversation);
-		
+		UserEntity user = new UserBuilder().withUsername("admin")
+						 .withEmail("sprawdzenie.filtru.spam@gmail.com")
+						 .withPassword("sprawdzenie")
+						 .bornOn(LocalDate.of(1991, 11, 12))
+						 .withLocation("Katowice")
+						 .withRole("ADMIN")
+						 .withGender(Gender.MALE)
+						 .withDescription("Admin user")
+						 .withPhotos(Arrays.asList("https://i.redd.it/7tp05fk4rp021.jpg", "https://www.wykop.pl/cdn/c3201142/comment_xGzPTCePZe26dWY0HySM0QCZGyAyS0HC.jpg"))
+						 .build();
+		userService.addUser(user);
 	}
 	
 }
