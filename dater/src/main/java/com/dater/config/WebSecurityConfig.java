@@ -30,7 +30,7 @@ import com.dater.service.UserService;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	public static final String ALLOWED_ORIGIN = "https://dater-front.herokuapp.com";
+	public static final String ALLOWED_ORIGIN = "http://www.testapptgst.ga";
 	private static final String LOGIN_URL = "/datrLogin";
 	private static final String LOGOUT_URL = "/datrLogout";
 
