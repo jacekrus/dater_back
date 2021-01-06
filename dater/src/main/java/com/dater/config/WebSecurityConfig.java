@@ -97,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList(ALLOWED_ORIGIN, "http://localhost:3000"));
+		configuration.setAllowedOrigins(Arrays.asList(ALLOWED_ORIGIN, "http://localhost:3000", "https://dater-front.herokuapp.com"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "PATCH", "DELETE"));
 		configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Content-Length", "Accept", "X-Requested-With", "X-XSRF-TOKEN", "Dater-Remember-Me"));
 		configuration.setAllowCredentials(true);
