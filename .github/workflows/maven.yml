@@ -28,6 +28,6 @@ jobs:
         image: ojciedz/zderzak8300
         registry: docker.io
         tags: latest
-        directory: ./dater
+        dockerfile: /home/runner/work/***/***/dater
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
