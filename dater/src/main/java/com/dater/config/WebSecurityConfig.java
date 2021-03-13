@@ -57,16 +57,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpStatus.FORBIDDEN.value()))
 			.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
 			.and()
-//			.rememberMe().rememberMeServices(rememberMeServices())
-//			.and()
+			.rememberMe().rememberMeServices(rememberMeServices())
+			.and()
 			.logout()
 			.deleteCookies("JSESSIONID")
 			.invalidateHttpSession(true)
 			.logoutUrl(LOGOUT_URL)
 			.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
 			.and().cors()
-			//.and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-			.and().csrf().disable();
+			.and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 	}
 	
 	@Override
