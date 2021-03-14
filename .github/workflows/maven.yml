@@ -28,6 +28,5 @@ jobs:
         image: ojciedz/zderzak8300
         registry: docker.io
         tags: latest
-        dockerfile: ./dater/Dockerfile/Dockerfile.ci
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
