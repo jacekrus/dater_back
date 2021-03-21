@@ -30,7 +30,8 @@ import com.dater.service.UserService;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	public static final String ALLOWED_ORIGIN = "https://www.testapptgst.ga";
+	//public static final String ALLOWED_ORIGIN = "https://www.testapptgst.ga";
+	public static final String ALLOWED_ORIGIN = "http://localhost:3000";
 	private static final String LOGIN_URL = "/datrLogin";
 	private static final String LOGOUT_URL = "/datrLogout";
 
