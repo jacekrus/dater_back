@@ -50,6 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.POST, "/users/validate").permitAll()
 			.antMatchers(HttpMethod.POST, "/passwords", "/passwords/reset").permitAll()
 			.antMatchers(HttpMethod.GET, "/passwords").permitAll()
+			.antMatchers("/actuator/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -67,6 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
 			.and().cors()
 			.and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+//			.and().csrf().disable();
 	}
 	
 	@Override
